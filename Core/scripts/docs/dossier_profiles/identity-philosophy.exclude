@@ -1,7 +1,0 @@
-.env*
-**/*.env
-backend/
-guardian/
-frontend/
-node_modules/
-artifacts/

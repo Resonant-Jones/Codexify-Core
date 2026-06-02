@@ -1,9 +1,0 @@
-.env*
-**/*.env
-guardian_index/
-.chroma/
-node_modules/
-artifacts/
-backend/rag/*
-backend/**/embedder.py
-frontend/node_modules/

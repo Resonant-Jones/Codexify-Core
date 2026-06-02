@@ -39,6 +39,18 @@ from guardian.protocol_tokens import (
     EXECUTOR_EVENT_TYPES,
     EXECUTOR_IDS,
     EXECUTOR_RELEASE_POSTURES,
+    GUARDIAN_DELEGATION_APPROVAL_MODES,
+    GUARDIAN_DELEGATION_APPROVAL_SOURCES,
+    GUARDIAN_DELEGATION_APPROVAL_STATES,
+    GUARDIAN_DELEGATION_CONTEXT_SOURCE_TYPES,
+    GUARDIAN_DELEGATION_INTERACTION_MODES,
+    GUARDIAN_DELEGATION_INTENT_STATUSES,
+    GUARDIAN_DELEGATION_RUN_STATUSES,
+    GUARDIAN_DELEGATION_TRANSCRIPT_ITEM_KINDS,
+    GUARDIAN_DELEGATION_TRANSCRIPT_ITEM_SOURCES,
+    GUARDIAN_DELEGATION_VISIBILITY_STATUSES,
+    GUARDIAN_PROVIDER_FAILURE_KINDS,
+    GUARDIAN_PROVIDER_TRANSPORT_CLASSIFICATIONS,
     IMAGE_ROUTING_PATHS,
     LOOP_STOP_REASONS,
     ORCHESTRATOR_DECISION_TOKENS,
@@ -66,6 +78,18 @@ from guardian.protocol_tokens import (
     ExecutorEventType,
     ExecutorId,
     ExecutorReleasePosture,
+    GuardianDelegationApprovalMode,
+    GuardianDelegationApprovalSource,
+    GuardianDelegationApprovalState,
+    GuardianDelegationContextSourceType,
+    GuardianDelegationInteractionMode,
+    GuardianDelegationIntentStatus,
+    GuardianDelegationRunStatus,
+    GuardianDelegationTranscriptItemKind,
+    GuardianDelegationTranscriptItemSource,
+    GuardianDelegationVisibilityStatus,
+    GuardianProviderFailureKind,
+    GuardianProviderTransportClassification,
     ImageRoutingPath,
     LoopStopReason,
     OrchestratorDecisionToken,
@@ -85,6 +109,198 @@ def test_acceptance_status_tokens() -> None:
     assert ACCEPTANCE_STATUSES == {"accepted", "accepted_degraded"}
 
 
+def test_guardian_delegation_protocol_tokens() -> None:
+    assert (
+        GuardianDelegationInteractionMode.NON_BLOCKING.value == "non_blocking"
+    )
+    assert GUARDIAN_DELEGATION_INTERACTION_MODES == {"non_blocking"}
+    assert GuardianDelegationApprovalMode.SCOPED_AUTO.value == "scoped_auto"
+    assert (
+        GuardianDelegationApprovalMode.HUMAN_REQUIRED.value
+        == "human_required"
+    )
+    assert GUARDIAN_DELEGATION_APPROVAL_MODES == {
+        "human_required",
+        "scoped_auto",
+    }
+    assert GuardianDelegationApprovalState.PENDING.value == "pending"
+    assert GuardianDelegationApprovalState.APPROVED.value == "approved"
+    assert GuardianDelegationApprovalState.BLOCKED.value == "blocked"
+    assert GUARDIAN_DELEGATION_APPROVAL_STATES == {
+        "pending",
+        "approved",
+        "blocked",
+    }
+    assert GuardianDelegationApprovalSource.NONE.value == "none"
+    assert GuardianDelegationApprovalSource.AUTO.value == "auto"
+    assert GuardianDelegationApprovalSource.HUMAN.value == "human"
+    assert GUARDIAN_DELEGATION_APPROVAL_SOURCES == {
+        "none",
+        "auto",
+        "human",
+    }
+    assert GuardianDelegationIntentStatus.DRAFT.value == "draft"
+    assert GuardianDelegationIntentStatus.PLANNING.value == "planning"
+    assert (
+        GuardianDelegationIntentStatus.AWAITING_CLARIFICATION.value
+        == "awaiting_clarification"
+    )
+    assert (
+        GuardianDelegationIntentStatus.AWAITING_APPROVAL.value
+        == "awaiting_approval"
+    )
+    assert GuardianDelegationIntentStatus.ACCEPTED.value == "accepted"
+    assert GuardianDelegationIntentStatus.SUPERSEDED.value == "superseded"
+    assert GuardianDelegationIntentStatus.CANCELLED.value == "cancelled"
+    assert GuardianDelegationIntentStatus.FAILED.value == "failed"
+    assert GUARDIAN_DELEGATION_INTENT_STATUSES == {
+        "draft",
+        "planning",
+        "awaiting_clarification",
+        "awaiting_approval",
+        "accepted",
+        "superseded",
+        "cancelled",
+        "failed",
+    }
+    assert GuardianDelegationRunStatus.NOT_ENQUEUED.value == "not_enqueued"
+    assert GuardianDelegationRunStatus.QUEUED.value == "queued"
+    assert GuardianDelegationRunStatus.RUNNING.value == "running"
+    assert GuardianDelegationRunStatus.COMPLETED.value == "completed"
+    assert GuardianDelegationRunStatus.FAILED.value == "failed"
+    assert GuardianDelegationRunStatus.CANCELLED.value == "cancelled"
+    assert GUARDIAN_DELEGATION_RUN_STATUSES == {
+        "not_enqueued",
+        "queued",
+        "running",
+        "completed",
+        "failed",
+        "cancelled",
+    }
+    assert GuardianDelegationVisibilityStatus.NOT_POSTED.value == "not_posted"
+    assert (
+        GuardianDelegationVisibilityStatus.INTERRUPT_POSTED.value
+        == "interrupt_posted"
+    )
+    assert (
+        GuardianDelegationVisibilityStatus.RESULT_POSTED.value
+        == "result_posted"
+    )
+    assert (
+        GuardianDelegationVisibilityStatus.STALE_SUPPRESSED.value
+        == "stale_suppressed"
+    )
+    assert (
+        GuardianDelegationVisibilityStatus.DELIVERY_DEGRADED.value
+        == "delivery_degraded"
+    )
+    assert GUARDIAN_DELEGATION_VISIBILITY_STATUSES == {
+        "not_posted",
+        "interrupt_posted",
+        "result_posted",
+        "stale_suppressed",
+        "delivery_degraded",
+    }
+    assert (
+        GuardianDelegationContextSourceType.SELECTED_TURN.value
+        == "selected_turn"
+    )
+    assert (
+        GuardianDelegationContextSourceType.PROJECT_KB.value == "project_kb"
+    )
+    assert (
+        GuardianDelegationContextSourceType.ARCHITECTURE_DOC.value
+        == "architecture_doc"
+    )
+    assert GuardianDelegationContextSourceType.ADR.value == "adr"
+    assert GuardianDelegationContextSourceType.TASK_FILE.value == "task_file"
+    assert (
+        GuardianDelegationContextSourceType.PROTOCOL_DOC.value
+        == "protocol_doc"
+    )
+    assert (
+        GuardianDelegationContextSourceType.LINKED_DOCUMENT.value
+        == "linked_document"
+    )
+    assert GUARDIAN_DELEGATION_CONTEXT_SOURCE_TYPES == {
+        "selected_turn",
+        "project_kb",
+        "architecture_doc",
+        "adr",
+        "task_file",
+        "protocol_doc",
+        "linked_document",
+    }
+    assert (
+        GuardianDelegationTranscriptItemKind.INTENT_CREATED.value
+        == "intent_created"
+    )
+    assert (
+        GuardianDelegationTranscriptItemKind.PLAN_PREPARED.value
+        == "plan_prepared"
+    )
+    assert (
+        GuardianDelegationTranscriptItemKind.APPROVAL_STATE.value
+        == "approval_state"
+    )
+    assert (
+        GuardianDelegationTranscriptItemKind.RUN_LINKED.value
+        == "run_linked"
+    )
+    assert GuardianDelegationTranscriptItemKind.RUN_STATUS.value == "run_status"
+    assert (
+        GuardianDelegationTranscriptItemKind.AGENT_RUN_EVENT.value
+        == "agent_run_event"
+    )
+    assert (
+        GuardianDelegationTranscriptItemKind.INTENT_CANCELLED.value
+        == "intent_cancelled"
+    )
+    assert (
+        GuardianDelegationTranscriptItemKind.DELIVERY_RESULT.value
+        == "delivery_result"
+    )
+    assert (
+        GuardianDelegationTranscriptItemKind.VISIBILITY_STATE.value
+        == "visibility_state"
+    )
+    assert GUARDIAN_DELEGATION_TRANSCRIPT_ITEM_KINDS == {
+        "intent_created",
+        "plan_prepared",
+        "approval_state",
+        "run_linked",
+        "run_status",
+        "agent_run_event",
+        "intent_cancelled",
+        "delivery_result",
+        "visibility_state",
+    }
+    assert (
+        GuardianDelegationTranscriptItemSource.GUARDIAN_DELEGATION_INTENT.value
+        == "guardian_delegation_intent"
+    )
+    assert GuardianDelegationTranscriptItemSource.AGENT_RUN.value == "agent_run"
+    assert (
+        GuardianDelegationTranscriptItemSource.AGENT_RUN_EVENT.value
+        == "agent_run_event"
+    )
+    assert (
+        GuardianDelegationTranscriptItemSource.AGENT_RUN_ARTIFACT.value
+        == "agent_run_artifact"
+    )
+    assert (
+        GuardianDelegationTranscriptItemSource.CHAT_MESSAGE.value
+        == "chat_message"
+    )
+    assert GUARDIAN_DELEGATION_TRANSCRIPT_ITEM_SOURCES == {
+        "guardian_delegation_intent",
+        "agent_run",
+        "agent_run_event",
+        "agent_run_artifact",
+        "chat_message",
+    }
+
+
 def test_context_request_status_tokens() -> None:
     assert ContextRequestStatus.ACCEPTED_NOT_EXECUTED.value == (
         "accepted_not_executed"
@@ -97,6 +313,44 @@ def test_context_request_status_tokens() -> None:
         "executed",
         "no_results",
         "failed",
+    }
+
+
+def test_provider_failure_and_transport_classification_tokens() -> None:
+    assert (
+        GuardianProviderFailureKind.PROVIDER_TIMEOUT.value
+        == "provider_timeout"
+    )
+    assert (
+        GuardianProviderFailureKind.TRANSPORT_ERROR.value
+        == "transport_error"
+    )
+    assert GuardianProviderFailureKind.REQUEST_ERROR.value == "request_error"
+    assert GUARDIAN_PROVIDER_FAILURE_KINDS == {
+        "provider_timeout",
+        "transport_error",
+        "request_error",
+    }
+
+    assert (
+        GuardianProviderTransportClassification.TIMEOUT.value == "timeout"
+    )
+    assert (
+        GuardianProviderTransportClassification.CONNECTION_REFUSED.value
+        == "connection_refused"
+    )
+    assert GuardianProviderTransportClassification.DNS_ERROR.value == (
+        "dns_error"
+    )
+    assert (
+        GuardianProviderTransportClassification.REQUEST_ERROR.value
+        == "request_error"
+    )
+    assert GUARDIAN_PROVIDER_TRANSPORT_CLASSIFICATIONS == {
+        "timeout",
+        "connection_refused",
+        "dns_error",
+        "request_error",
     }
 
 

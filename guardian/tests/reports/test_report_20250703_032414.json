@@ -1,29 +1,3 @@
-{
-  "summary": {
-    "total": 2,
-    "passed": 0,
-    "failed": 0,
-    "error": 2
-  },
-  "execution_time": {
-    "start": "2025-07-03T03:24:14.452798",
-    "end": "2025-07-03T03:24:14.459857",
-    "duration": 0.007059
-  },
-  "results": [
-    {
-      "name": "test_system_integration",
-      "status": "error",
-      "duration": 0.0,
-      "error": "No module named 'guardian'",
-      "timestamp": "2025-07-03T03:24:14.456282"
-    },
-    {
-      "name": "test_agents_and_plugins",
-      "status": "error",
-      "duration": 0.0,
-      "error": "No module named 'guardian'",
-      "timestamp": "2025-07-03T03:24:14.459801"
-    }
-  ]
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:82148c850b38d866712b3d7c15e5814a14c4af3fcd24443a7b71db24e50d2ec6
+size 633

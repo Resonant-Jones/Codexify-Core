@@ -1,0 +1,232 @@
+# Disabled docformatter hook for now: newer versions of docformatter use the
+# `python_venv` pre-commit language, which is not supported by the current
+# pre-commit version in this environment. Re-enable once pre-commit is upgraded.
+# -   repo: https://github.com/PyCQA/docformatter
+#     rev: v1.7.5
+#     hooks:
+#     -   id: docformatter
+#         args: [--in-place, --wrap-summaries=80, --wrap-descriptions=80]
+# Pre-commit configuration for Codexify
+# See https://pre-commit.com for more information
+
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+    -   id: trailing-whitespace
+        exclude: |
+            (?x)(
+                ^\.env\.example$
+            )
+    -   id: end-of-file-fixer
+        exclude: |
+            (?x)(
+                (^|/)task_file_template\.md$
+            )
+    -   id: check-yaml
+        exclude: |
+            (?x)(
+                ^codex_tasks/|  # Task YAML has embedded diff syntax
+                ^\.github/workflows/  # Workflow files handled separately
+            )
+    -   id: check-json
+        exclude: |
+            (?x)(
+                ^manifest\.json$|  # Git LFS pointer, not actual JSON
+                ^models/|  # Model configs may have LFS pointers
+                (^|/)\.last-run\.json$  # Generated test state
+            )
+    -   id: check-added-large-files
+    -   id: debug-statements
+        exclude: |
+            (?x)(
+                ^backend/wait_for_db\.py$  # Dockerfile snippet, not Python
+            )
+    -   id: check-merge-conflict
+    -   id: check-case-conflict
+    -   id: check-docstring-first
+        exclude: |
+            (?x)(
+                ^guardian/core/research/|  # Research modules have non-standard structure
+                ^guardian/chat/cli/|
+                ^guardian/plugins/|  # Plugin modules
+                ^guardian/tests/|    # Test modules
+                ^guardian/plugin_loader\.py$|  # Plugin loader
+                ^tests/|             # Root test modules
+                ^conftest\.py$       # Pytest conftest files
+            )
+    -   id: detect-private-key
+
+-   repo: https://github.com/gitleaks/gitleaks
+    rev: v8.24.2
+    hooks:
+    -   id: gitleaks
+        args: [--config=.gitleaks.toml, --staged]
+        exclude: |
+            (?x)(
+                ^node_modules/|
+                ^\.pnpm-store/|
+                ^\.venv/|
+                ^venv/|
+                ^frontend/node_modules/|
+                ^frontend/\.pnpm-store/|
+                ^tests/scripts/test_review_heartbeat|
+                ^tests/scripts/test_run_heartbeat|
+                ^tests/scripts/test_inspect_heartbeat|
+                ^tests/scripts/test_stage_heartbeat
+            )
+
+-   repo: https://github.com/psf/black
+    rev: 23.3.0
+    hooks:
+    -   id: black
+        language_version: python3
+        args: [--line-length=80]
+
+-   repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+    -   id: isort
+        args: [--profile=black, --line-length=80]
+
+-   repo: https://github.com/pycqa/flake8
+    rev: 6.0.0
+    hooks:
+    -   id: flake8
+        additional_dependencies:
+        # MVP: Removed flake8-docstrings to reduce noise - re-enable when ready
+        # -   flake8-docstrings
+        -   flake8-bugbear
+        -   flake8-comprehensions
+        -   flake8-simplify
+        args:
+        - --max-line-length=88
+        - "--extend-ignore=E501,W503,E203"
+        # E501: line too long (handled by black)
+        # W503: line break before binary operator (black style)
+        # E203: whitespace before ':' (black style)
+        files: |
+            (?x)^(
+                guardian/routes/threads\.py|
+                guardian/workers/chat_worker\.py|
+                guardian/identity\.py|
+                guardian/cognition/(imprints|personas)/store\.py|
+                guardian/graph/models\.py|
+                guardian/eval/run_graph_rag_benchmark\.py|
+                backend/rag/chatgpt_migration\.py
+            )$
+
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.3.0
+    hooks:
+    -   id: mypy
+        args: [--ignore-missing-imports, --explicit-package-bases]
+        # Explicit package bases prevents "Source file found twice" error
+        # when repo root has __init__.py but guardian/ is the actual package
+        # Exclude directories that have spurious __init__.py or aren't valid package names
+        exclude: |
+            (?x)(
+                ^\.github/|
+                ^GitHub/|
+                ^requirements/|
+                ^data/|
+                ^flows/|
+                ^codex_memory/|
+                ^frontend/|
+                ^venv/|
+                ^\.venv/|
+                ^__init__\.py$|
+                guardian-codex/|
+                ^backend/wait_for_db\.py$|
+                ^backend/migrations/|
+                ^guardian/codexify/|
+                ^tools/codex-runner/
+            )
+        # If you want type stubs later, add them explicitly here instead of using types-all, e.g.:
+        # additional_dependencies:
+        # - types-requests
+        # - types-python-dateutil
+
+-   repo: https://github.com/pycqa/bandit
+    rev: 1.7.5
+    hooks:
+    -   id: bandit
+        # MVP: Only report HIGH severity + HIGH confidence issues
+        # Use -ll -ii for full security audit later
+        args: [-lll, -iii, -r, "-s", "B101,B602,B324"]
+        # -lll: HIGH severity only, -iii: HIGH confidence only
+        # --skip=B101: Skip assert statements (used in tests)
+        # --skip=B602: Skip shell=True checks (dev scripts only)
+        # --skip=B324: Skip weak hash warnings (used for ID generation, not security)
+        additional_dependencies: [pbr]
+
+-   repo: https://github.com/asottile/pyupgrade
+    rev: v3.4.0
+    hooks:
+    -   id: pyupgrade
+        args: [--py38-plus]
+
+# NOTE: docformatter hook disabled for now.
+# Newer versions of docformatter use the `python_venv` pre-commit language,
+# which your current pre-commit version doesn’t understand. Re-enable once
+# you’ve upgraded pre-commit.
+# -   repo: https://github.com/PyCQA/docformatter
+#     rev: v1.7.5
+#     hooks:
+#     -   id: docformatter
+#         args: [--in-place, --wrap-summaries=80, --wrap-descriptions=80]
+
+-   repo: local
+    hooks:
+    -   id: deny-invalid-git-paths
+        name: deny invalid git paths
+        entry: scripts/verification/deny_invalid_git_paths.sh
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit, pre-push]
+
+    -   id: pytest
+        name: pytest
+        entry: pytest
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]
+
+    -   id: system-check
+        name: System Health Check
+        entry: python -m guardian.system_init --health-check
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]
+
+# Custom settings
+default_language_version:
+    python: python3.13
+
+default_stages: [pre-commit, pre-push]
+
+ci:
+    autofix_commit_msg: 'style: auto fixes from pre-commit hooks'
+    autoupdate_commit_msg: 'chore: pre-commit autoupdate'
+    skip: []
+    submodules: false
+    require_serial: true
+
+# File patterns to exclude
+exclude: |
+    (?x)(
+        ^docs/|
+        ^.venv/|
+        ^venv/|
+        ^build/|
+        ^dist/|
+        .pytest_cache/|
+        __pycache__/|
+        \.git/|
+        \.eggs/|
+        \.tox/|
+        \.coverage
+    )

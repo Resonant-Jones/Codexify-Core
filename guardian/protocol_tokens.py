@@ -11,11 +11,103 @@ class AcceptanceStatus(str, Enum):
     ACCEPTED_DEGRADED = "accepted_degraded"
 
 
+class GuardianDelegationInteractionMode(str, Enum):
+    NON_BLOCKING = "non_blocking"
+
+
+class GuardianDelegationApprovalMode(str, Enum):
+    SCOPED_AUTO = "scoped_auto"
+    HUMAN_REQUIRED = "human_required"
+
+
+class GuardianDelegationApprovalState(str, Enum):
+    PENDING = "pending"
+    APPROVED = "approved"
+    BLOCKED = "blocked"
+
+
+class GuardianDelegationApprovalSource(str, Enum):
+    NONE = "none"
+    AUTO = "auto"
+    HUMAN = "human"
+
+
+class GuardianDelegationIntentStatus(str, Enum):
+    DRAFT = "draft"
+    PLANNING = "planning"
+    AWAITING_CLARIFICATION = "awaiting_clarification"
+    AWAITING_APPROVAL = "awaiting_approval"
+    ACCEPTED = "accepted"
+    SUPERSEDED = "superseded"
+    CANCELLED = "cancelled"
+    FAILED = "failed"
+
+
+class GuardianDelegationRunStatus(str, Enum):
+    NOT_ENQUEUED = "not_enqueued"
+    QUEUED = "queued"
+    RUNNING = "running"
+    COMPLETED = "completed"
+    FAILED = "failed"
+    CANCELLED = "cancelled"
+
+
+class GuardianDelegationVisibilityStatus(str, Enum):
+    NOT_POSTED = "not_posted"
+    INTERRUPT_POSTED = "interrupt_posted"
+    RESULT_POSTED = "result_posted"
+    STALE_SUPPRESSED = "stale_suppressed"
+    DELIVERY_DEGRADED = "delivery_degraded"
+
+
+class GuardianDelegationContextSourceType(str, Enum):
+    SELECTED_TURN = "selected_turn"
+    PROJECT_KB = "project_kb"
+    ARCHITECTURE_DOC = "architecture_doc"
+    ADR = "adr"
+    TASK_FILE = "task_file"
+    PROTOCOL_DOC = "protocol_doc"
+    LINKED_DOCUMENT = "linked_document"
+
+
+class GuardianDelegationTranscriptItemKind(str, Enum):
+    INTENT_CREATED = "intent_created"
+    PLAN_PREPARED = "plan_prepared"
+    APPROVAL_STATE = "approval_state"
+    RUN_LINKED = "run_linked"
+    RUN_STATUS = "run_status"
+    AGENT_RUN_EVENT = "agent_run_event"
+    INTENT_CANCELLED = "intent_cancelled"
+    DELIVERY_RESULT = "delivery_result"
+    VISIBILITY_STATE = "visibility_state"
+
+
+class GuardianDelegationTranscriptItemSource(str, Enum):
+    GUARDIAN_DELEGATION_INTENT = "guardian_delegation_intent"
+    AGENT_RUN = "agent_run"
+    AGENT_RUN_EVENT = "agent_run_event"
+    AGENT_RUN_ARTIFACT = "agent_run_artifact"
+    CHAT_MESSAGE = "chat_message"
+
+
 class ContextRequestStatus(str, Enum):
     ACCEPTED_NOT_EXECUTED = "accepted_not_executed"
     EXECUTED = "executed"
     NO_RESULTS = "no_results"
     FAILED = "failed"
+
+
+class GuardianProviderFailureKind(str, Enum):
+    PROVIDER_TIMEOUT = "provider_timeout"
+    TRANSPORT_ERROR = "transport_error"
+    REQUEST_ERROR = "request_error"
+
+
+class GuardianProviderTransportClassification(str, Enum):
+    TIMEOUT = "timeout"
+    CONNECTION_REFUSED = "connection_refused"
+    DNS_ERROR = "dns_error"
+    REQUEST_ERROR = "request_error"
 
 
 class TaskEventType(str, Enum):
@@ -274,8 +366,47 @@ class ImageRoutingPath(str, Enum):
 ACCEPTANCE_STATUSES: frozenset[str] = frozenset(
     {status.value for status in AcceptanceStatus}
 )
+GUARDIAN_DELEGATION_INTERACTION_MODES: frozenset[str] = frozenset(
+    {mode.value for mode in GuardianDelegationInteractionMode}
+)
+GUARDIAN_DELEGATION_APPROVAL_MODES: frozenset[str] = frozenset(
+    {mode.value for mode in GuardianDelegationApprovalMode}
+)
+GUARDIAN_DELEGATION_APPROVAL_STATES: frozenset[str] = frozenset(
+    {state.value for state in GuardianDelegationApprovalState}
+)
+GUARDIAN_DELEGATION_APPROVAL_SOURCES: frozenset[str] = frozenset(
+    {source.value for source in GuardianDelegationApprovalSource}
+)
+GUARDIAN_DELEGATION_INTENT_STATUSES: frozenset[str] = frozenset(
+    {status.value for status in GuardianDelegationIntentStatus}
+)
+GUARDIAN_DELEGATION_RUN_STATUSES: frozenset[str] = frozenset(
+    {status.value for status in GuardianDelegationRunStatus}
+)
+GUARDIAN_DELEGATION_VISIBILITY_STATUSES: frozenset[str] = frozenset(
+    {status.value for status in GuardianDelegationVisibilityStatus}
+)
+GUARDIAN_DELEGATION_CONTEXT_SOURCE_TYPES: frozenset[str] = frozenset(
+    {source_type.value for source_type in GuardianDelegationContextSourceType}
+)
+GUARDIAN_DELEGATION_TRANSCRIPT_ITEM_KINDS: frozenset[str] = frozenset(
+    {kind.value for kind in GuardianDelegationTranscriptItemKind}
+)
+GUARDIAN_DELEGATION_TRANSCRIPT_ITEM_SOURCES: frozenset[str] = frozenset(
+    {source.value for source in GuardianDelegationTranscriptItemSource}
+)
 CONTEXT_REQUEST_STATUSES: frozenset[str] = frozenset(
     {status.value for status in ContextRequestStatus}
+)
+GUARDIAN_PROVIDER_FAILURE_KINDS: frozenset[str] = frozenset(
+    {kind.value for kind in GuardianProviderFailureKind}
+)
+GUARDIAN_PROVIDER_TRANSPORT_CLASSIFICATIONS: frozenset[str] = frozenset(
+    {
+        classification.value
+        for classification in GuardianProviderTransportClassification
+    }
 )
 TASK_EVENT_TYPES: frozenset[str] = frozenset(
     {event_type.value for event_type in TaskEventType}
@@ -372,7 +503,19 @@ IMAGE_ROUTING_PATHS: frozenset[str] = frozenset(
 
 __all__ = [
     "AcceptanceStatus",
+    "GuardianDelegationInteractionMode",
+    "GuardianDelegationApprovalMode",
+    "GuardianDelegationApprovalState",
+    "GuardianDelegationApprovalSource",
+    "GuardianDelegationIntentStatus",
+    "GuardianDelegationRunStatus",
+    "GuardianDelegationVisibilityStatus",
+    "GuardianDelegationContextSourceType",
+    "GuardianDelegationTranscriptItemKind",
+    "GuardianDelegationTranscriptItemSource",
     "ContextRequestStatus",
+    "GuardianProviderFailureKind",
+    "GuardianProviderTransportClassification",
     "TaskEventType",
     "ToolTurnState",
     "LoopStopReason",
@@ -401,6 +544,18 @@ __all__ = [
     "ImageRoutingPath",
     "TraceSnapshotAbsenceReason",
     "ACCEPTANCE_STATUSES",
+    "GUARDIAN_DELEGATION_INTERACTION_MODES",
+    "GUARDIAN_DELEGATION_APPROVAL_MODES",
+    "GUARDIAN_DELEGATION_APPROVAL_STATES",
+    "GUARDIAN_DELEGATION_APPROVAL_SOURCES",
+    "GUARDIAN_DELEGATION_INTENT_STATUSES",
+    "GUARDIAN_DELEGATION_RUN_STATUSES",
+    "GUARDIAN_DELEGATION_VISIBILITY_STATUSES",
+    "GUARDIAN_DELEGATION_CONTEXT_SOURCE_TYPES",
+    "GUARDIAN_DELEGATION_TRANSCRIPT_ITEM_KINDS",
+    "GUARDIAN_DELEGATION_TRANSCRIPT_ITEM_SOURCES",
+    "GUARDIAN_PROVIDER_FAILURE_KINDS",
+    "GUARDIAN_PROVIDER_TRANSPORT_CLASSIFICATIONS",
     "TASK_EVENT_TYPES",
     "TOOL_TURN_STATES",
     "LOOP_STOP_REASONS",

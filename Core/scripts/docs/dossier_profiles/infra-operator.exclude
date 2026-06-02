@@ -1,6 +1,0 @@
-.env*
-**/*.env
-guardian_index/
-.chroma/
-node_modules/
-artifacts/

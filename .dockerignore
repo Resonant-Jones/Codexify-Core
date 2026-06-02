@@ -1,0 +1,70 @@
+# Docker ignore for repo root
+# node modules and build artifacts
+node_modules
+frontend/node_modules
+
+# build outputs
+dist
+frontend/dist
+
+# IDE / editor
+.vscode
+.idea
+.DS_Store
+
+# logs
+*.log
+npm-debug.log
+yarn-error.log
+yarn-debug.log*
+
+# vite cache
+.vite
+src/.vite
+
+# environment + secrets
+.env
+.env.local
+
+# git
+.git
+
+# python cache
+__pycache__/
+*.pyc
+
+# python virtualenvs
+.venv
+venv
+
+# test/cache
+.cache
+.pytest_cache
+
+# backend image build only needs dependency manifests plus guardian/, backend/,
+# plugins/, and scripts/; exclude unrelated or runtime-mounted repo areas.
+/.github
+/.chroma
+/archive
+/artifacts
+/codex_ralph_loop
+/codex_tasks
+/codexify-ui-triage
+/cypress
+/data
+/docker
+/docs
+!docs/builtin-help/
+!docs/builtin-help/**
+/frontend
+/models
+/src-tauri
+/tests
+/tools
+/codex_runner
+!/codex_runner
+!/codex_runner/**
+/guardian/codemap/codemap.json
+/guardian/tts_output
+/guardian/*.backup
+/guardian/*.old

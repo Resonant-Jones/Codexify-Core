@@ -2,7 +2,7 @@
 This file is Codexify's canonical short-form source of truth for current operational and release state. If it conflicts with older architecture, planning, or roadmap language on short-horizon reality, this file wins.
 
 ## Last updated
-2026-05-22
+2026-05-28
 
 ## Interpretation rule
 This file is authoritative for:
@@ -13,51 +13,60 @@ This file is authoritative for:
 - what is and is not part of the present release promise
 
 ## Current phase
-Codexify is in local-first beta hardening on `main`. The supported path remains the local Docker Compose stack with local-only provider posture. Recent `main` work tightened the supported profile wiring, repaired a personal-facts settings route, surfaced runtime state in the chat shell, and added an internal/manual local-model draft adapter. The release promise still stays narrow and proof-driven.
+Codexify is in local-first beta hardening on `main`. The supported path remains the local Docker Compose stack with local-only provider posture. Recent `main` changes improved operator visibility and added a site-ready documentation export bundle, but they do not widen the release promise.
 
 ## What changed recently
-- Supported-profile wiring was fixed on `main`.
-- Personal-facts settings routing was repaired on `main`.
-- GuardianChat now surfaces runtime visual state in the shell.
-- An internal/manual local-model draft adapter landed.
-- Daily audit artifacts were refreshed around the current `main` tip.
-- Doctrine-first Unity Audit framing is being added to the architecture layer as a coherence lens only; it does not claim new runtime implementation.
+- `main` added a site-ready developer guide export bundle under `docs/site-export/developer-guide/`.
+- `main` added Whooshd local provider catalog metadata.
+- Health checks still surface LLM model availability on the supported path.
+- Supported-profile, health, and catalog surfaces remain aligned on the local-only stack.
+- Personal-facts settings routing remains repaired on `main`.
+- GuardianChat still surfaces runtime visual state in the shell.
+- Internal/manual local-model draft adapter work remains present, but not a release promise.
+- Build Proposal artifacts now have a doctrine/scaffold surface for reviewable
+  Guardian Build Loop task candidates; proposal generation remains draft-only
+  and does not imply approval, execution, release support, runtime proof, or
+  autonomous self-modification.
 
 ## Current supported reality
 - Local Docker Compose remains the supported install path.
 - The supported posture is local-only: `CODEXIFY_LOCAL_ONLY_MODE=true`, `ALLOW_CLOUD_PROVIDERS=false`, `LLM_PROVIDER=local`.
-- Supported-profile, health, and catalog surfaces are aligned on `main`.
+- Health checks report LLM model availability.
 - Chat completion works on the supported path and persists back into the source thread.
 - Upload -> embed -> readback works on the supported path.
 - Workspace-local Obsidian retrieval is supported on the current tip.
 - Image-turn containment remains proven on the supported profile.
 - Coding results return through Guardian into the source thread on the supported path.
-- Command Center exposes non-dispatch worker-control visibility and recommendation-only next-task inspection.
-- A local `Publishing_Portal/Core/` source mirror may exist for public-facing packaging and review. This mirror is generated output only; it is not the source of truth and does not replace supported-path live proof.
-- Heartbeat status is readable in Agent Command Center; execution, scheduling, and publishing remain off this path.
 - Graph writes remain default-off on the supported Compose path.
-- The local-model draft adapter is an internal/manual artifact lane only.
+- The release-truth override at `docs/architecture/00-current-state.md` is the live interpretation layer for this week.
 
 ## Not yet true / do not assume
 - Do not assume cloud-provider beta support.
 - Do not assume the packaged desktop shell replaces the local Compose supported path.
 - Do not assume command bus, delegation, federation, or graph write surfaces are part of the present release promise.
-- Do not assume the Guardian Retrieval Navigation Model, adaptive route hints, reviewable graph evolution proposals, or self-improving memory are shipped runtime features. The new retrieval navigation note is planning doctrine only, does not expand the supported release surface, and does not change the current graph-writes-default-off boundary.
+- Do not assume the Guardian Retrieval Navigation Model, adaptive route hints, reviewable graph evolution proposals, or self-improving memory are shipped runtime features.
+- Do not assume the site-export bundle changes runtime support or release readiness.
 - Do not assume the local-model draft adapter is connected to Heartbeat, publishing, scheduling, command dispatch, or release approval.
-- Do not treat the `Publishing_Portal/Core/` source mirror as a release artifact or as evidence of release readiness.
 - Do not assume UI dispatch, lease allocation, live agent execution, or merge automation are release-proven.
+- Do not assume Guardian Build Loop doctrine means autonomous self-modification, auto-merge, push, or release-ready coding-worker behavior.
+- Do not assume Build Proposal generation means approval, execution, release
+  support, runtime proof, or autonomous self-modification.
+- Do not assume Whooshd catalog metadata widens provider support beyond the local-only contract.
 - Do not infer desktop packaging readiness from architecture docs alone.
 
 ## Active blockers
-- No current supported-path blocker is proven on `main`.
-- Chat completion still depends on Redis and worker health, so runtime stalls remain a release risk.
-- Legacy config paths still coexist, so startup and operator state can drift if the supported profile is not kept aligned.
+- Queue-coupled chat still depends on Redis plus worker health.
+- Canonical and legacy config paths still coexist, so startup and operator state can drift.
+- Legacy `/tools` behavior still overlaps with the command bus.
+- Sync subscriptions are still process-local rather than durable across restarts.
+- Federation remains a high-blast-radius area with trust-policy and egress sensitivity.
 
 ## This week’s priorities
 1. Keep the supported profile, health, and catalog surfaces aligned on `main`.
-2. Preserve fresh proof for the supported path when runtime behavior changes.
+2. Preserve fresh proof for chat, upload, retrieval, and coding-result return paths.
 3. Keep internal-only surfaces labeled as such and out of the release promise.
-4. Begin doctrine-first unification work through the Unity Audit architecture layer without overstating implementation beyond docs and governance framing.
+4. Keep the release-truth docs in sync with the live `main` posture.
+5. Avoid widening supported beta claims until a new merged capability is proven end to end.
 
 ## Release definition right now
 - [x] Supported-profile flags match the local-only beta contract.
@@ -65,7 +74,7 @@ Codexify is in local-first beta hardening on `main`. The supported path remains 
 - [x] Chat completion, upload -> embed -> readback, and workspace-local retrieval are proven on the supported stack.
 - [x] Coding results return through Guardian into the source thread.
 - [x] No internal-only or quarantined surface is part of the release claim.
-- [ ] Runtime proof must be refreshed whenever the supported path drifts.
+- [ ] Queue, config, sync, and federation risks must stay explicitly documented and rechecked when the supported path drifts.
 
 ## How to read the rest of the KB
 - `system-overview.md` explains structure, not release readiness.

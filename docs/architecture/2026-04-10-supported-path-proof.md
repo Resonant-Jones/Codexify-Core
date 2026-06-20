@@ -33,7 +33,7 @@ Containers running at time of proof:
 
 | Check | Result |
 |---|---|
-| Active completion provider | `local` (Ollama at `100.109.4.57:11434`) |
+| Active completion provider | `local` (Ollama at `127.0.0.1:11434`) |
 | Active model | `qwen3.5:9b` |
 | Cloud providers (OpenAI, Anthropic, Gemini) | Disabled — missing credentials |
 | Groq | Enabled in catalog but not active; not used for completions |
@@ -62,7 +62,7 @@ Containers running at time of proof:
  "provider":"local","model":"qwen3.5:9b",
  "provider_runtime":{...,"id":"local","authorized":true,"available":true},
  "model_resolution":{"model":"qwen3.5:9b","endpoint_resolution":{
-   "selected_endpoint":{"base_url":"http://100.109.4.57:11434"}}}}
+   "selected_endpoint":{"base_url":"http://127.0.0.1:11434"}}}}
 ```
 
 ### `/api/health/llm`
@@ -72,7 +72,7 @@ Containers running at time of proof:
  "provider_runtime":{"id":"local","authorized":true,"available":true},
  "completion_service":{"ok":true,"worker_heartbeat_detected":true},
  "endpoint_resolution":{"state":"available",
-   "selected_endpoint":{"base_url":"http://100.109.4.57:11434"}},
+   "selected_endpoint":{"base_url":"http://127.0.0.1:11434"}},
  "checked_endpoint":"/api/tags","http_status":200}
 ```
 
@@ -93,12 +93,12 @@ Key excerpt — `local` provider block:
 ```
 {"id":"local","displayName":"Local","enabled":true,"authorized":true,"available":true,
  "default_model":"qwen3.5:9b",
- "source":{"kind":"local","baseUrl":"http://100.109.4.57:11434"},
+ "source":{"kind":"local","baseUrl":"http://127.0.0.1:11434"},
  "model_index":{"source":"local","state":"available","model_count":1}}
 ```
 Cloud providers: OpenAI (`enabled:false,available:false,disabled_reason:"Missing provider credentials"`), Anthropic (same), Gemini (same).
 
-**Reconciliation:** All surfaces agree on provider=`local`, model=`qwen3.5:9b`, Ollama endpoint at `100.109.4.57:11434`. No contradictions found.
+**Reconciliation:** All surfaces agree on provider=`local`, model=`qwen3.5:9b`, Ollama endpoint at `127.0.0.1:11434`. No contradictions found.
 
 **Verdict: PASS**
 
@@ -175,7 +175,7 @@ curl -s http://localhost:8888/api/chat/1/messages \
 
 - User message persisted to Postgres via `chatlog_db.create_message`
 - Completion task enqueued to Redis queue (`task_id` returned immediately)
-- Worker picked up task, called Ollama at `100.109.4.57:11434`
+- Worker picked up task, called Ollama at `127.0.0.1:11434`
 - Assistant message (ID 2) persisted back to Postgres
 - `completion_truth.accepted=true, executed=true, completed=true` — full loop closed
 

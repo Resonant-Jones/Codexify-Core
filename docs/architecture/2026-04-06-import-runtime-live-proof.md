@@ -368,7 +368,7 @@ codexify-neo4j-1                 1.00%     527.4MiB / 11.67GiB   4.41%
 
 4. **Queue system functional**: Redis queue accepted completion tasks, and `worker-chat` processed them successfully. Queue depth remained at 0 (progressing).
 
-5. **LLM provider reachable**: Local Ollama endpoint (`http://100.109.4.57:11434`) was reachable and returned valid model listings including `qwen3.5:9b`.
+5. **LLM provider reachable**: Local Ollama endpoint (`http://127.0.0.1:11434`) was reachable and returned valid model listings including `qwen3.5:9b`.
 
 6. **Graph optionality confirmed**: The ContextBroker log showed `graph=1(contributed)` but Neo4j errors (`neo4j_error` in backfill status) did not block the completion pipeline.
 

@@ -1,5 +1,44 @@
 # Inference Providers
 
+## Local Runtime Presets
+
+The supported beta profile uses one canonical provider lane:
+
+- `LLM_PROVIDER=local`
+- `ALLOW_CLOUD_PROVIDERS=false`
+- `CODEXIFY_LOCAL_ONLY_MODE=true`
+- `LOCAL_COMPAT_FIRST=1`
+
+`LOCAL_RUNTIME_PRESET` is a setup/catalog preset, not a provider id. It selects
+default local endpoint, model, display, and health-probe values while preserving
+the same `local` provider trust boundary.
+
+`AI_BACKEND`, if present in a legacy `.env`, is a legacy compatibility surface only.
+It must not be treated as the canonical source of runtime truth for the supported
+Whoosh'd path. The canonical local provider identity is:
+
+- provider class: `local`
+- runtime preset: `whooshd-mlx` (Apple Silicon) or `ollama` (non-Mac)
+
+Operators should not use `AI_BACKEND=ollama` to mean Whoosh'd.
+
+| Preset | Default base URL in Docker | Display/vendor | Default model |
+| --- | --- | --- | --- |
+| `whooshd-mlx` | `http://host.docker.internal:8000/v1` | `Whoosh'd` / `whooshd` | `mlx-community/Llama-3.2-3B-Instruct-4bit` |
+| `ollama` | `http://host.docker.internal:11434/v1` | `Ollama` / `ollama` | `llama3.2:latest` |
+| `lmstudio` | `http://host.docker.internal:1234/v1` | `LM Studio` / `lmstudio` | `local-model` placeholder; replace with a model from `/v1/models` |
+| `custom-openai-compatible` | `http://host.docker.internal:8000/v1` | `Custom Local` / `custom-openai-compatible` | `local-model` placeholder |
+
+Whoosh'd remains the Apple Silicon MLX-oriented beta default. Ollama is the
+portable non-Mac default used by the setup wizard when no runtime preset is
+selected. LM Studio is supported directly as an OpenAI-compatible local runtime
+preset. The router prefers `/v1/chat/completions` when `LOCAL_COMPAT_FIRST` is
+true and model inventory is proven through `/v1/models` or `/api/tags`.
+
+The supported-profile manifest intentionally does not enforce a local endpoint
+or model id. It enforces the local-only safety posture; endpoint and model
+availability are runtime evidence.
+
 ## Alibaba / DashScope
 
 Alibaba Cloud DashScope / Model Studio is available as a first-class chat

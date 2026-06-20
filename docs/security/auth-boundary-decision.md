@@ -2,7 +2,6 @@
 
 Date: 2026-02-11
 Status: accepted
-
 ## Decision
 
 1. Static browser API keys are local-only.

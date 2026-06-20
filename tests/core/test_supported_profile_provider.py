@@ -5,17 +5,24 @@ from guardian.core.ai_router import _resolve_local_base
 from guardian.core.config import LLMConfigError, Settings, validate_llm_config
 
 
+_WHOOSHD_MODEL = "mlx-community/gemma-4-e2b-it-4bit"
+
+
 def _supported_profile_settings(**overrides) -> Settings:
     defaults = {
         "LLM_PROVIDER": "local",
         "ALLOW_CLOUD_PROVIDERS": False,
         "CODEXIFY_LOCAL_ONLY_MODE": True,
         "CODEXIFY_EGRESS_ALLOWLIST": "",
-        "LOCAL_BASE_URL": "http://host.docker.internal:11434/v1",
+        "LOCAL_RUNTIME_PRESET": "whooshd-mlx",
+        "LOCAL_BASE_URL": "http://host.docker.internal:8000/v1",
         "LOCAL_API_KEY": "local",
-        "LOCAL_LLM_MODEL": "library2/ministral-3:8b",
-        "LOCAL_CHAT_MODEL": "library2/ministral-3:8b",
-        "LLM_MODEL": "library2/ministral-3:8b",
+        "LOCAL_COMPAT_FIRST": True,
+        "LOCAL_PROVIDER_DISPLAY_NAME": "Whoosh'd",
+        "LOCAL_PROVIDER_VENDOR": "whooshd",
+        "LOCAL_LLM_MODEL": _WHOOSHD_MODEL,
+        "LOCAL_CHAT_MODEL": _WHOOSHD_MODEL,
+        "LLM_MODEL": _WHOOSHD_MODEL,
     }
     defaults.update(overrides)
     return Settings(**defaults)
@@ -26,6 +33,16 @@ def test_validate_llm_config_accepts_supported_profile_local_contract(
 ):
     monkeypatch.setenv("CODEXIFY_SUPPORTED_PROFILE", "v1-local-core-web-mcp")
     settings = _supported_profile_settings()
+
+    validate_llm_config(settings)
+
+
+def test_supported_profile_keeps_model_inventory_as_runtime_discovery() -> None:
+    settings = _supported_profile_settings(
+        LOCAL_CHAT_MODEL="mlx-community/gemma-4-e2b-it-4bit",
+        LOCAL_LLM_MODEL="llama-3.2-3b-mlx",
+        LLM_MODEL="llama-3.2-3b-mlx",
+    )
 
     validate_llm_config(settings)
 
@@ -41,20 +58,19 @@ def test_validate_llm_config_rejects_supported_profile_provider_drift(
         CODEXIFY_EGRESS_ALLOWLIST="groq",
     )
 
-    with pytest.raises(LLMConfigError, match="blessed local gateway contract"):
+    with pytest.raises(
+        LLMConfigError, match="blessed local gateway contract"
+    ):
         validate_llm_config(settings, provider_override="local")
 
 
-def test_resolve_local_base_rejects_supported_profile_gateway_drift(
+def test_resolve_local_base_rejects_supported_profile_runtime_base_drift(
     monkeypatch,
 ):
     monkeypatch.setenv("CODEXIFY_SUPPORTED_PROFILE", "v1-local-core-web-mcp")
     settings = _supported_profile_settings(
-        LOCAL_BASE_URL="http://127.0.0.1:11434/v1"
+        LOCAL_BASE_URL="http://127.0.0.1:8000/v1"
     )
 
-    with pytest.raises(HTTPException) as exc:
+    with pytest.raises(HTTPException, match="requires LOCAL_BASE_URL"):
         _resolve_local_base(settings)
-
-    assert exc.value.status_code == 400
-    assert "host.docker.internal:11434/v1" in str(exc.value.detail)

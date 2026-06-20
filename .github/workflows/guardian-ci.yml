@@ -1,0 +1,435 @@
+name: Guardian CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: guardian-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: Detect Changed Areas
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      backend_changed: ${{ steps.filter.outputs.backend }}
+      frontend_changed: ${{ steps.filter.outputs.frontend }}
+      ci_changed: ${{ steps.filter.outputs.ci }}
+      shared_changed: ${{ steps.filter.outputs.shared }}
+      run_backend: ${{ steps.compute.outputs.run_backend }}
+      run_frontend: ${{ steps.compute.outputs.run_frontend }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed files by area
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          # Force git-based diffing so large PRs do not silently truncate the changed-file list.
+          token: ""
+          filters: |
+            ci:
+              - '.github/workflows/**'
+              - '.github/scripts/**'
+            shared:
+              - 'docker-compose.yml'
+              - 'pytest.ini'
+              - 'pyproject.toml'
+              - 'requirements*.txt'
+              - 'backend/requirements*.txt'
+            frontend:
+              - 'frontend/**'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+              - 'pnpm-workspace.yaml'
+              - 'frontend/package.json'
+              - 'frontend/pnpm-lock.yaml'
+              - 'frontend/pnpm-workspace.yaml'
+            backend:
+              - 'guardian/**'
+              - 'backend/**'
+              - 'tests/**'
+              - 'scripts/validate_core_loops.sh'
+              - 'pyproject.toml'
+              - 'requirements*.txt'
+              - 'backend/requirements*.txt'
+              - 'pytest.ini'
+              - 'docker-compose.yml'
+              - 'alembic/**'
+              - '**/migrations/**'
+              - '.github/scripts/create-ci-env.sh'
+
+      - name: Compute run matrix
+        id: compute
+        shell: bash
+        run: |
+          set -eu
+          backend="${{ steps.filter.outputs.backend }}"
+          frontend="${{ steps.filter.outputs.frontend }}"
+          ci="${{ steps.filter.outputs.ci }}"
+          shared="${{ steps.filter.outputs.shared }}"
+
+          if [ "$backend" = "true" ] || [ "$ci" = "true" ] || [ "$shared" = "true" ]; then
+            echo "run_backend=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run_backend=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          if [ "$frontend" = "true" ] || [ "$ci" = "true" ] || [ "$shared" = "true" ]; then
+            echo "run_frontend=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run_frontend=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Show change summary
+        run: |
+          echo "backend_changed=${{ steps.filter.outputs.backend }}"
+          echo "frontend_changed=${{ steps.filter.outputs.frontend }}"
+          echo "ci_changed=${{ steps.filter.outputs.ci }}"
+          echo "shared_changed=${{ steps.filter.outputs.shared }}"
+          echo "run_backend=${{ steps.compute.outputs.run_backend }}"
+          echo "run_frontend=${{ steps.compute.outputs.run_frontend }}"
+
+  backend-tests:
+    name: Backend Tests (Python 3.11)
+    runs-on: ubuntu-latest
+    needs: changes
+    permissions:
+      contents: read
+    env:
+      GUARDIAN_ALLOW_DUMMY_SETTINGS: "1"
+      GENAI_API_KEY: "dummy"
+      NOTION_API_KEY: "dummy"
+      ANTHROPIC_API_KEY: "dummy"
+      OPENAI_API_KEY: "dummy"
+      GEMINI_API_KEY: "dummy"
+      GOOGLE_API_KEY: "dummy"
+      GROQ_API_KEY: "dummy"
+      LLM_PROVIDER: "groq"
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - name: No-op (no backend-relevant changes)
+        if: ${{ needs.changes.outputs.run_backend != 'true' }}
+        run: |
+          echo "No backend-relevant changes detected."
+          echo "backend_changed=${{ needs.changes.outputs.backend_changed }}"
+          echo "ci_changed=${{ needs.changes.outputs.ci_changed }}"
+          echo "shared_changed=${{ needs.changes.outputs.shared_changed }}"
+
+      - name: Checkout
+        if: ${{ needs.changes.outputs.run_backend == 'true' }}
+        uses: actions/checkout@v4
+
+      - name: Verify tracked paths are valid
+        if: ${{ needs.changes.outputs.run_backend == 'true' }}
+        shell: bash
+        run: |
+          set -euxo pipefail
+          bash scripts/verification/deny_invalid_git_paths.sh
+
+      - name: Set up Python
+        if: ${{ needs.changes.outputs.run_backend == 'true' }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: |
+            backend/requirements.txt
+            pyproject.toml
+
+      - name: Install dependencies (Linux-safe)
+        if: ${{ needs.changes.outputs.run_backend == 'true' }}
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install -r backend/requirements.txt
+          python -m pip install -e .
+          python -m pip install pytest pytest-asyncio
+
+      - name: Run backend tests
+        if: ${{ needs.changes.outputs.run_backend == 'true' }}
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python -m pytest -q --maxfail=1 --disable-warnings tests -k "not cli and not integration"
+
+      - name: Run MVP core loop harness
+        if: ${{ needs.changes.outputs.run_backend == 'true' }}
+        env:
+          CORE_LOOP_RAG_SELECTOR: tests/integration/test_rag_integration_loop.py::test_rag_integration_memory_loop
+          CORE_LOOP_MIGRATION_SELECTOR: tests/routes/test_migration_routes.py::test_migration_route_executes_real_ingest_and_embeds
+          CORE_LOOP_IMAGE_SELECTOR: tests/routes/test_media_routes.py::TestImageGeneration::test_generate_image_success
+          CORE_LOOP_DOCGEN_SELECTOR: guardian/tests/test_document_gen_persist_and_link.py::test_document_generate_persists_and_links
+          GUARDIAN_API_KEY: test
+          OPENAI_API_KEY: dummy
+          LLM_PROVIDER: local
+        shell: bash
+        run: |
+          set -euxo pipefail
+          echo "Core loop selectors:"
+          echo "$CORE_LOOP_RAG_SELECTOR"
+          echo "$CORE_LOOP_MIGRATION_SELECTOR"
+          echo "$CORE_LOOP_IMAGE_SELECTOR"
+          echo "$CORE_LOOP_DOCGEN_SELECTOR"
+          bash scripts/validate_core_loops.sh
+
+  alembic-config-sanity:
+    name: alembic-config-sanity
+    runs-on: ubuntu-latest
+    needs: changes
+    permissions:
+      contents: read
+    steps:
+      - name: No-op (no backend-relevant changes)
+        if: ${{ needs.changes.outputs.run_backend != 'true' }}
+        run: |
+          echo "No backend-relevant changes detected."
+          echo "backend_changed=${{ needs.changes.outputs.backend_changed }}"
+          echo "ci_changed=${{ needs.changes.outputs.ci_changed }}"
+          echo "shared_changed=${{ needs.changes.outputs.shared_changed }}"
+
+      - name: Checkout
+        if: ${{ needs.changes.outputs.run_backend == 'true' }}
+        uses: actions/checkout@v4
+
+      - name: Validate Alembic config + Docker runtime references
+        if: ${{ needs.changes.outputs.run_backend == 'true' }}
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python - <<'PY'
+          from __future__ import annotations
+
+          import configparser
+          from pathlib import Path
+
+          root = Path(".").resolve()
+          cfg_path = root / "backend" / "alembic.ini"
+          if not cfg_path.is_file():
+              raise SystemExit("backend/alembic.ini missing")
+
+          parser = configparser.RawConfigParser()
+          parser.read(cfg_path)
+          script_location = parser.get("alembic", "script_location", fallback="")
+          if not script_location:
+              raise SystemExit("backend/alembic.ini missing [alembic] script_location")
+
+          resolved = Path(
+              script_location.replace("%(here)s", str(cfg_path.parent))
+          ).resolve()
+          expected = (root / "guardian" / "db" / "migrations").resolve()
+          if resolved != expected:
+              raise SystemExit(
+                  f"alembic script_location drift: expected {expected}, got {resolved}"
+              )
+          if not (resolved / "env.py").is_file():
+              raise SystemExit("alembic env.py missing in canonical migrations dir")
+          if not (resolved / "versions").is_dir():
+              raise SystemExit("alembic versions dir missing in canonical migrations dir")
+
+          forbidden = (
+              "/app_staging/backend/alembic.ini",
+              "script_location = backend/migrations",
+          )
+          for path_str in ("backend/Dockerfile", "backend/Dockerfile.prod"):
+              txt = (root / path_str).read_text(encoding="utf-8")
+              for token in forbidden:
+                  if token in txt:
+                      raise SystemExit(
+                          f"{path_str} contains forbidden Alembic stub pattern: {token}"
+                      )
+
+          print("alembic-config-sanity passed")
+          PY
+
+  frontend-quality:
+    name: Frontend Quality
+    runs-on: ubuntu-latest
+    needs: changes
+    permissions:
+      contents: read
+    steps:
+      - name: No-op (no frontend-relevant changes)
+        if: ${{ needs.changes.outputs.run_frontend != 'true' }}
+        run: |
+          echo "No frontend-relevant changes detected."
+          echo "frontend_changed=${{ needs.changes.outputs.frontend_changed }}"
+          echo "ci_changed=${{ needs.changes.outputs.ci_changed }}"
+          echo "shared_changed=${{ needs.changes.outputs.shared_changed }}"
+
+      - name: Checkout
+        if: ${{ needs.changes.outputs.run_frontend == 'true' }}
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        if: ${{ needs.changes.outputs.run_frontend == 'true' }}
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Set up Node.js
+        if: ${{ needs.changes.outputs.run_frontend == 'true' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: |
+            pnpm-lock.yaml
+            frontend/pnpm-lock.yaml
+
+      - name: Install dependencies
+        if: ${{ needs.changes.outputs.run_frontend == 'true' }}
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        if: ${{ needs.changes.outputs.run_frontend == 'true' }}
+        run: pnpm run lint
+
+      - name: Build
+        if: ${{ needs.changes.outputs.run_frontend == 'true' }}
+        run: pnpm run build
+
+      - name: Test
+        if: ${{ needs.changes.outputs.run_frontend == 'true' }}
+        run: pnpm run test
+
+  migration-contract:
+    name: Migration Contract (Container)
+    runs-on: ubuntu-latest
+    needs: [changes, backend-tests, alembic-config-sanity]
+    permissions:
+      contents: read
+    steps:
+      - name: No-op (no backend-relevant changes)
+        if: ${{ needs.changes.outputs.run_backend != 'true' }}
+        run: |
+          echo "No backend-relevant changes detected."
+          echo "backend_changed=${{ needs.changes.outputs.backend_changed }}"
+          echo "ci_changed=${{ needs.changes.outputs.ci_changed }}"
+          echo "shared_changed=${{ needs.changes.outputs.shared_changed }}"
+
+      - name: Checkout
+        if: ${{ needs.changes.outputs.run_backend == 'true' }}
+        uses: actions/checkout@v4
+
+      - name: Create CI env file for Docker Compose
+        if: ${{ needs.changes.outputs.run_backend == 'true' }}
+        run: .github/scripts/create-ci-env.sh .env
+
+      - name: Reclaim Docker space before backend build
+        if: ${{ needs.changes.outputs.run_backend == 'true' }}
+        shell: bash
+        run: |
+          set -euxo pipefail
+          docker system df || true
+          docker builder prune -af
+          docker image prune -f || true
+          docker system df || true
+
+      - name: Build backend image
+        if: ${{ needs.changes.outputs.run_backend == 'true' }}
+        run: docker compose build backend
+
+      - name: Reclaim Docker build cache before starting database
+        if: ${{ needs.changes.outputs.run_backend == 'true' }}
+        shell: bash
+        run: |
+          set -euxo pipefail
+          docker system df || true
+          docker builder prune -af
+          docker image prune -f || true
+          docker system df || true
+
+      - name: Start database
+        if: ${{ needs.changes.outputs.run_backend == 'true' }}
+        shell: bash
+        run: |
+          set -euxo pipefail
+          docker compose up -d db
+          for i in {1..40}; do
+            if docker compose exec -T db pg_isready -U codexify -d Codexify >/dev/null 2>&1; then
+              echo "Postgres is ready"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Postgres did not become ready in time" >&2
+          docker compose logs db || true
+          exit 1
+
+      - name: Run migration contract test in backend container
+        if: ${{ needs.changes.outputs.run_backend == 'true' }}
+        shell: bash
+        run: |
+          set -euxo pipefail
+          docker compose run --rm --no-deps \
+            -e DATABASE_URL="postgresql://codexify:codexify@db:5432/Codexify" \
+            -e TEST_DATABASE_URL="postgresql://codexify:codexify@db:5432/Codexify" \
+            --entrypoint python \
+            backend -m pytest /app/tests/test_migrations.py -v
+
+      - name: Smoke boot backend image without bind mounts
+        if: ${{ needs.changes.outputs.run_backend == 'true' }}
+        shell: bash
+        run: |
+          set -euxo pipefail
+          docker rm -f ci-backend-smoke >/dev/null 2>&1 || true
+          docker run -d \
+            --name ci-backend-smoke \
+            --network codexify_default \
+            -p 18888:8888 \
+            --env-file .env \
+            -e DATABASE_URL="postgresql://codexify:codexify@db:5432/Codexify" \
+            -e GUARDIAN_DB_DSN="postgresql://codexify:codexify@db:5432/Codexify" \
+            -e GUARDIAN_CHATLOG_DSN="postgresql://codexify:codexify@db:5432/Codexify" \
+            -e CODEXIFY_CONFIG_SOURCE=core \
+            -e CODEXIFY_EMBEDDINGS_BACKEND=mock \
+            -e CODEXIFY_ALLOW_EMBEDDINGS_FALLBACK=1 \
+            -e PORT=8888 \
+            codexify-backend
+
+          for i in {1..60}; do
+            if curl -fsS http://127.0.0.1:18888/ping >/dev/null; then
+              echo "Backend smoke ping is healthy"
+              exit 0
+            fi
+            sleep 2
+          done
+
+          echo "Backend smoke ping failed" >&2
+          docker logs --tail=300 ci-backend-smoke || true
+          exit 1
+
+      - name: Save docker logs on failure
+        if: ${{ failure() && needs.changes.outputs.run_backend == 'true' }}
+        run: |
+          docker compose logs backend > /tmp/ci-backend.log || true
+          docker compose logs db > /tmp/ci-db.log || true
+          docker logs ci-backend-smoke > /tmp/ci-backend-smoke.log || true
+
+      - name: Upload logs on failure
+        if: ${{ failure() && needs.changes.outputs.run_backend == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: migration-contract-logs
+          path: |
+            /tmp/ci-backend.log
+            /tmp/ci-db.log
+            /tmp/ci-backend-smoke.log
+
+      - name: Tear down
+        if: ${{ always() && needs.changes.outputs.run_backend == 'true' }}
+        run: |
+          docker rm -f ci-backend-smoke >/dev/null 2>&1 || true
+          docker compose down -v

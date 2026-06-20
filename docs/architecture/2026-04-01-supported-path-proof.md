@@ -4,7 +4,7 @@
 **Branch:** main
 **HEAD commit:** `7657da97a8e76faa6c60b3a292a9c5140ac9be1b`
 **Runtime path:** Local Docker Compose (docker-compose.yml default services)
-**Active provider/model:** local / qwen3.5:0.8b (via http://100.109.4.57:11434)
+**Active provider/model:** local / qwen3.5:0.8b (via http://127.0.0.1:11434)
 **Vector backend:** Chroma (`codexify_vault_supported` collection)
 **Startup env-file:** .env (CODEXIFY_RUNTIME_ENV_FILE=.env)
 
@@ -28,7 +28,7 @@ This proof specifically re-checks the upload -> embed -> retrieve path after the
 | Runtime path | Docker Compose (backend, db, redis, neo4j, frontend, workers) |
 | Provider | local |
 | Model | qwen3.5:0.8b |
-| Ollama endpoint | http://100.109.4.57:11434 |
+| Ollama endpoint | http://127.0.0.1:11434 |
 | Vector backend | Chroma, collection `codexify_vault_supported` |
 | Embedder | local sentence-transformer (bge-large-en-v1.5) |
 | Active env vars | See Section 3 |
@@ -210,7 +210,7 @@ assistant_message_persisted thread_id=1229 turn_id=c635f545-f4cc-4eeb-95c0-cb824
 
 **Key finding:**
 
-The runtime did NOT misclassify the slow model response as "offline". The Ollama endpoint at `http://100.109.4.57:11434` was reachable and responding (slowly), so the provider health correctly reported `online`.
+The runtime did NOT misclassify the slow model response as "offline". The Ollama endpoint at `http://127.0.0.1:11434` was reachable and responding (slowly), so the provider health correctly reported `online`.
 
 **What was NOT tested:**
 - Full cold-start scenario where Ollama endpoint is completely unreachable — cannot be cleanly reproduced in this run

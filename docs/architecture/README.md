@@ -1,5 +1,7 @@
 Purpose: Provide a KB-first entry point into Codexify's current architecture so humans and AI can orient quickly, find the right source files, and plan changes with an accurate map.
-Last updated: 2026-05-25
+Start here: read [`00-current-state.md`](./00-current-state.md) first when you need current-state interpretation, release readiness, or short-horizon priorities.
+Start here for live operational truth rather than structural architecture: [`00-current-state.md`](./00-current-state.md).
+Last updated: 2026-06-20
 Source anchors:
 - docs/architecture/
 - guardian/guardian_api.py
@@ -22,10 +24,16 @@ Source anchors:
 
 # Codexify Architecture KB
 
-Start here with [`00-current-state.md`](./00-current-state.md) when you need current-state interpretation rather than structural architecture.
-Use it first for live release/readiness interpretation, supported install path, active blockers, and short-horizon priorities.
+Start here: read [`00-current-state.md`](./00-current-state.md) first when you need current-state interpretation rather than structural architecture. It is the live operational truth layer for release readiness, supported install path, active blockers, and short-horizon priorities.
 
-If you need the live operational truth layer, read `00-current-state.md` first and treat the rest of the KB as supporting context.
+Start here with [`00-current-state.md`](./00-current-state.md) when you need current-state interpretation rather than structural architecture.
+
+Start here: if you need current-state interpretation rather than structural architecture, read [`00-current-state.md`](./00-current-state.md) first.
+Use it first for live release/readiness interpretation, supported install path, active blockers, and short-horizon priorities.
+If you need the live weekly interpretation of `main`, start with [`00-current-state.md`](./00-current-state.md).
+Begin with [`00-current-state.md`](./00-current-state.md) whenever you need current-state interpretation rather than subsystem structure.
+
+If you need the live operational truth layer, read [`00-current-state.md`](./00-current-state.md) first and treat the rest of the KB as supporting context.
 
 ## What Codexify Is
 
@@ -46,6 +54,8 @@ If you are working on self-build doctrine, coding-worker execution, Codex Runner
 If you are working on Guardian-mediated coding-agent execution or future Pi SDK integration, start with [`ADR-020: Guardian Mediated Coding Agent Execution Contract`](./adr/020-guardian-mediated-coding-agent-execution-contract.md). That ADR defines the contract-only execution seam and keeps Guardian as the request, policy, transcript, and lineage owner.
 
 If you are working on Execution Ledger gate artifacts, acceptance-criteria mapping, implementation-plan artifacts, or completion/proof evidence mapping over Campaign Runner and Guardian rails, start with [`Execution Ledger Gate Artifacts Contract`](./execution-ledger-gate-artifacts-contract.md) after ADR-028.
+
+If you are working on Campaign Runner Stage A/Stage B planning objectives or operator-authored prompt intent, read [`Campaign Runner Intention Packet Contract`](./campaign-runner-intention-packet-contract.md). That contract defines the bounded intention input seam without changing provider behavior, schemas, Pi broker semantics, Guardian ownership, or current release truth. Use the canonical [`Campaign Runner Intention Packet Template`](../Campaign/templates/campaign-runner-intention-packet-template.md) and the illustrative [`Provider Readiness Example`](../Campaign/examples/campaign-runner-intention-packet-provider-readiness.md) for operator-authored planning packets.
 
 If you are working on proposed Execution Ledger token vocabularies (gate decisions, plan states, acceptance results, proof decisions, escalation reasons) before runtime tokenization, start with [`Execution Ledger Token Domain Proposal`](./execution-ledger-token-domain-proposal.md) after the gate/artifact contract.
 
@@ -89,13 +99,16 @@ Before generating architecture diagrams, read the [`KB Validity Matrix`](./kb-va
 - [Architecture Atlas](./architecture-atlas.md): peer-facing reading guide for the validated architecture corpus, runtime diagrams, and UI diagrams.
 - [Agent Protocol Operations Index](./agent-protocol-operations.md): agent-facing map for task rituals, campaign/task interpretation, architecture-impact workflow, validation expectations, and contingency behavior.
 - [Execution Ledger Gate Artifacts Contract](./execution-ledger-gate-artifacts-contract.md): docs-only follow-through contract for ADR-028 defining gate artifacts, acceptance-criteria mapping, implementation plans, and completion/proof evidence mapping onto Campaign Runner and Guardian execution surfaces.
+- [Campaign Runner Intention Packet Contract](./campaign-runner-intention-packet-contract.md): bounded operator-authored planning input seam for Stage A audit and Stage B campaign compilation; not runtime proof and not a release-claim source. Canonical packet shape: [template](../Campaign/templates/campaign-runner-intention-packet-template.md); illustrative packet only: [provider readiness example](../Campaign/examples/campaign-runner-intention-packet-provider-readiness.md).
 - [Execution Ledger Token Domain Proposal](./execution-ledger-token-domain-proposal.md): docs-only proposal for candidate Execution Ledger token domains, semantics, and registry placement guidance before runtime tokenization.
 - [Workspace Surface Spec v1](./codexify_workspace_surface_spec_v_1.md): UI/design-canon contract for Workspace as Shelf + Scratchpad + Inspector across Dashboard, Guardian, and Documents; not first-pass runtime topology truth.
 - [Persona Studio Architecture](./persona-studio.md): shell-integrated persona/profile configuration surface, local draft state, diagnostics preview, and boundary rules; complements the broader product spec.
+- [Local TTS Adapter Contract](./local-tts-adapter-contract.md): canonical local TTS backend-island contract for Qwen3-TTS default posture, headless voiceover rendering, and Persona Studio voice-boundary interpretation.
 - [Guardian Intent Spine and Cross-Surface Control Plane](./adr/022-guardian-intent-spine-and-cross-surface-control-plane.md): canonical cross-surface intent envelope and dispatch contract for chat, voice, automations, CLI, and future plugin surfaces.
 - [Context Command and Active Connector Semantics](./adr/024-context-command-active-connector-semantics.md): governing contract for slash-command connector invocation, active connector semantics, and turn-scoped connector/tool boundaries.
 - [System Overview](./system-overview.md): current runtime components, topology, and critical paths.
 - [Critical Flows](./flows.md): current trigger-to-output runtime flows with failure modes.
+- [Whoosh'd Model Profiles](./whooshd-model-profiles.md): local Whoosh'd/MLX profile registry and profile-backed local model selection seam; does not create a new provider id or release support by itself.
 - [Flow Builder Elicitation Lane ADR](./adr/006-flow-builder-elicitation-lane.md): upstream spec-building lane for tacit-knowledge extraction, workflow authoring semantics, and validation-before-execution doctrine.
 - [Flow Builder Thread, Draft, and Receipts Contract ADR](./adr/014-flow-builder-thread-draft-and-receipts-contract.md): canonical Guardian-thread, FlowDraft, Builder-view, and run-receipt contract for flow authoring semantics.
 - [Flow Builder Typed Surface and Run Receipt Contract ADR](./adr/027-flow-builder-typed-surface-and-run-receipt-contract.md): typed vocabulary, validation issue taxonomy, semantic step contract, test/activation distinction, and complete RunReceipt field contract for future implementation planning.
@@ -121,6 +134,7 @@ Before generating architecture diagrams, read the [`KB Validity Matrix`](./kb-va
 - [Verified Personal Facts Context Injection ADR](./adr/013-verified-personal-facts-context-injection.md): bounded backend injection of verified active personal facts into provider-ready chat context.
 - [Data and Storage](./data-and-storage.md): storage systems, key tables, invariants, and data risk hotspots.
 - [Config and Ops](./config-and-ops.md): env vars, config resolution, supported run paths, health checks, logging, and debugging cues.
+- [Whoosh'd Model Profiles](./whooshd-model-profiles.md): data-only model profile registry for local Whoosh'd/MLX descriptors; this does not change runtime routing or release support by itself.
 - [Modules and Ownership](./modules-and-ownership.md): subsystem map, dependency edges, and blast radius guidance.
 - [Bounded Tool-Augmented Completion Live Proof](./2026-04-20-bounded-tool-augmented-completion-live-proof.md): fresh supported-path live proof for the one-turn command-bus tool slice on the current `main` tip.
 - [Tool Jobs Cleanup Live Proof](./2026-04-28-tool-jobs-cleanup-live-proof.md): supported Compose schema proof that the dedicated `tool_jobs` cleanup migration restores downgrade shape, removes the table again on upgrade, and leaves `command_runs` / `command_run_events` intact.

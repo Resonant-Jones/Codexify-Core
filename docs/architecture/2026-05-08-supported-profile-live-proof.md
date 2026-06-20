@@ -52,7 +52,7 @@ CODEXIFY_LOCAL_ONLY_MODE=true
 LLM_PROVIDER=local
 ALLOW_CLOUD_PROVIDERS=false
 GUARDIAN_API_KEY=<redacted>
-LOCAL_BASE_URL=http://100.109.4.57:11434/v1
+LOCAL_BASE_URL=http://127.0.0.1:11434/v1
 LOCAL_CHAT_MODEL=gemma4-e4b-hauhau:latest
 CODEXIFY_ENABLE_GRAPH_WRITES=false
 CODEXIFY_GRAPH_BACKEND=noop
@@ -60,7 +60,7 @@ CODEXIFY_GRAPH_BACKEND=noop
 
 ### Active model
 
-`gemma4-e4b-hauhau:latest` via local provider at `100.109.4.57:11434`.
+`gemma4-e4b-hauhau:latest` via local provider at `127.0.0.1:11434`.
 
 ---
 

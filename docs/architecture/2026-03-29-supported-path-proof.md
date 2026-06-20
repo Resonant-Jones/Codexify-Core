@@ -21,7 +21,7 @@ This artifact documents the end-to-end runtime proof for the supported local Doc
 - **Redis:** 7-alpine (internal)
 - **Workers:** chat, chat-embed, document-embed, voice, warmup
 - **Neo4j:** 5 on ports 7474/7687
-- **LLM Provider:** local (Ollama at 100.109.4.57:11434)
+- **LLM Provider:** local (Ollama at 127.0.0.1:11434)
 - **Embedding Model:** /models/bge-large-en-v1.5
 - **Chat Model:** qwen3.5:0.8b
 - **Vector Store:** Chroma at /app/.chroma, collection codexify_vault

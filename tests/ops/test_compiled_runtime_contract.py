@@ -15,18 +15,16 @@ def test_compiled_runtime_docker_target_and_overlay_exist() -> None:
     )
 
     assert "FROM builder AS compiled-builder" in dockerfile
-    assert (
-        "FROM dhi.io/python:3.11.14-debian13-dev AS compiled-runtime"
-        in dockerfile
-    )
+    assert "ARG PYTHON_BASE_IMAGE=python:3.11.14-bookworm" in dockerfile
+    assert "FROM ${PYTHON_BASE_IMAGE} AS compiled-runtime" in dockerfile
     assert (
         "pyinstaller /src/packaging/pyinstaller/codexify_runtime.spec"
         in dockerfile
     )
     assert "COPY backend/alembic.ini /app/runtime/alembic.ini" in dockerfile
     assert "COPY backend/migrations /app/runtime/migrations" in dockerfile
-    assert "ENTRYPOINT [\"/app/runtime/codexify-runtime\"]" in dockerfile
-    assert "CMD [\"backend\"]" in dockerfile
+    assert 'ENTRYPOINT ["/app/runtime/codexify-runtime"]' in dockerfile
+    assert 'CMD ["backend"]' in dockerfile
     assert "image: codexify-runtime-compiled:local" in overlay
     assert 'entrypoint: ["/app/runtime/codexify-runtime"]' in overlay
     assert 'command: ["backend"]' in overlay
@@ -74,13 +72,16 @@ def test_compiled_runtime_dispatcher_migrator_role_uses_runtime_migrations(
     assert isinstance(calls["upgrade_config"], DummyConfig)
 
 
-def test_compiled_runtime_dispatcher_backend_preflight_still_blocks_missing_models(
-) -> None:
+def test_compiled_runtime_dispatcher_backend_preflight_still_blocks_missing_models() -> (
+    None
+):
     from backend import compiled_runtime_entry as runtime_entry
 
     monkeypatch = pytest.MonkeyPatch()
     monkeypatch.setenv("LOCAL_EMBEDDINGS_REQUIRED", "1")
-    monkeypatch.setenv("LOCAL_EMBED_MODEL", "/private/tmp/codexify-missing-model")
+    monkeypatch.setenv(
+        "LOCAL_EMBED_MODEL", "/private/tmp/codexify-missing-model"
+    )
 
     backend_called = {"value": False}
 

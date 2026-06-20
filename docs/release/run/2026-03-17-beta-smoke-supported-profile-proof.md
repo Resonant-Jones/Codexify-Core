@@ -202,7 +202,7 @@ task.failed
   "type": "task.failed",
   "data": {
     "duration_ms": 257083,
-    "error": "Local inference request failed for model 'qwen3.5:27b' at http://100.109.4.57:11434/api/chat: Response ended prematurely.",
+    "error": "Local inference request failed for model 'qwen3.5:27b' at http://127.0.0.1:11434/api/chat: Response ended prematurely.",
     "thread_id": 3,
     "turn_id": "d160f772-9e23-471c-bd13-17ff756bf511",
     "provider": "local"

@@ -5,7 +5,7 @@ Recon only for the Obsidian/local knowledge-source path. No activation or behavi
 
 ## Fresh Runtime Context
 - From the fresh rebuild context provided: frontend dev server up on `5173`, backend `/ping` repeatedly healthy, and TTS `/health` repeatedly healthy.
-- From the same rebuild context: warmup reported a timeout against local model `qwen3.5:27b` at `http://100.109.4.57:11434/api/chat`. This is a model warmup signal only, not a knowledge-source readiness signal.
+- From the same rebuild context: warmup reported a timeout against local model `qwen3.5:27b` at `http://127.0.0.1:11434/api/chat`. This is a model warmup signal only, not a knowledge-source readiness signal.
 - No runtime signal was provided for Obsidian ingestion or connector sync; this report treats Obsidian readiness as unproven by runtime evidence.
 
 ## Existing Obsidian-Related Surfaces

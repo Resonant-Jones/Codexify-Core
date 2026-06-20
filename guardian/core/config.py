@@ -187,13 +187,13 @@ class Settings(BaseSettings):
     # catalog in config.
     # --- Local (Ollama OpenAI-compatible) routing ---
     LOCAL_BASE_URL: str = Field(
-        default="http://127.0.0.1:11434/v1",
-        description="Base URL for the local OpenAI-compatible API (e.g., Ollama ).",
+        default="http://127.0.0.1:8000/v1",
+        description="Base URL for the local OpenAI-compatible API (e.g., Whoosh'd MLX-VLM bridge).",
     )
     LOCAL_DOCKER_FALLBACK_BASE_URL: str = Field(
-        default="http://host.docker.internal:11434",
+        default="http://host.docker.internal:8000",
         description=(
-            "Optional Docker-host bridge fallback for local Ollama when "
+            "Optional Docker-host bridge fallback for local gateway when "
             "LOCAL_BASE_URL points to localhost/loopback inside containers."
         ),
     )
@@ -250,6 +250,46 @@ class Settings(BaseSettings):
             "provider source metadata, e.g. whooshd."
         ),
     )
+    WHOOSHD_MANAGED: bool = Field(
+        default=False,
+        description="When true, Codexify may auto-start Whoosh'd as a managed sidecar process.",
+    )
+    WHOOSHD_HOST: str = Field(
+        default="127.0.0.1",
+        description="Host for the Whoosh'd sidecar process.",
+    )
+    WHOOSHD_PORT: int = Field(
+        default=8000,
+        ge=1,
+        le=65535,
+        description="Port for the Whoosh'd sidecar process.",
+    )
+    WHOOSHD_COMMAND: str = Field(
+        default="python -m uvicorn whooshd.app:app",
+        description="Launch command for the Whoosh'd sidecar (development). Use 'whooshd serve' when CLI is available.",
+    )
+    WHOOSHD_WORKING_DIR: str | None = Field(
+        default=None,
+        description="Working directory for the Whoosh'd sidecar process. Defaults to the Whoosh'd project root.",
+    )
+    WHOOSHD_MODEL_REGISTRY_PATH: str | None = Field(
+        default=None,
+        description="Path to Whoosh'd model registry YAML for clean model aliases.",
+    )
+    WHOOSHD_STARTUP_TIMEOUT_SECONDS: float = Field(
+        default=90.0,
+        ge=5.0,
+        description="Maximum seconds to wait for Whoosh'd to become ready after launch.",
+    )
+    WHOOSHD_HEALTH_POLL_INTERVAL_SECONDS: float = Field(
+        default=1.0,
+        ge=0.25,
+        description="Polling interval for Whoosh'd readiness checks.",
+    )
+    WHOOSHD_STOP_ON_EXIT: bool = Field(
+        default=True,
+        description="When true, stop the Whoosh'd sidecar process when Codexify exits.",
+    )
     LOCAL_LLM_MODEL: str = Field(
         default="library2/ministral-3:8b",
         description="Local chat model identifier for Ollama.",
@@ -257,6 +297,22 @@ class Settings(BaseSettings):
     LOCAL_CHAT_MODEL: str = Field(
         default="library2/ministral-3:8b",
         description="Local chat model identifier used by supported profile validation.",
+    )
+    CODEXIFY_WHOOSHD_THREADWAKE_SEGMENTS_ENABLED: bool = Field(
+        default=False,
+        description=(
+            "When true, emit threadwake segment metadata to Whoosh'd local provider "
+            "so Whoosh'd can identify cacheable prompt layers. "
+            "Only takes effect when LOCAL_PROVIDER_VENDOR is 'whooshd'."
+        ),
+    )
+    CODEXIFY_WHOOSHD_THREADWAKE_MODE: str = Field(
+        default="observe",
+        description="Default ThreadWake mode when segments are enabled (observe | ephemeral | session).",
+    )
+    CODEXIFY_WHOOSHD_THREADWAKE_SCOPE: str = Field(
+        default="thread",
+        description="Default ThreadWake scope when segments are enabled (thread | project | user).",
     )
     LOCAL_EMBEDDING_MODEL: str | None = Field(
         default=None,

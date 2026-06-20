@@ -1,0 +1,49 @@
+name: Smoke (Manual)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create CI env file for Docker Compose
+        run: .github/scripts/create-ci-env.sh .env
+
+      - name: Enable BuildKit & Compose v2
+        run: |
+          echo "DOCKER_BUILDKIT=1" >> "$GITHUB_ENV"
+          docker compose version
+
+      - name: Build & start smoke stack
+        run: |
+          docker compose up -d --build db neo4j redis graph-init migrator backend frontend
+
+      - name: Probes
+        run: |
+          curl -f http://localhost:8888/healthz
+          curl -f http://localhost:5173
+          curl -f -H "X-API-Key: ci-guardian-key" http://localhost:8888/api/events || true
+
+      - name: Validate Alembic/ORM schema contract
+        shell: bash
+        run: |
+          set -euxo pipefail
+          docker compose run --rm --no-deps \
+            -e DATABASE_URL="postgresql://codexify:codexify@db:5432/Codexify" \
+            -e TEST_DATABASE_URL="postgresql://codexify:codexify@db:5432/Codexify" \
+            --entrypoint python \
+            backend -m pytest /app/tests/test_migrations.py -v
+
+      - name: Save backend logs if failed
+        if: failure()
+        run: docker compose logs backend db
+
+      - name: Tear down
+        if: always()
+        run: docker compose down -v

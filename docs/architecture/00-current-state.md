@@ -2,7 +2,7 @@
 This file is Codexify's canonical short-form source of truth for current operational and release state. If it conflicts with older architecture, planning, or roadmap language on short-horizon reality, this file wins.
 
 ## Last updated
-2026-05-28
+2026-06-20
 
 ## Interpretation rule
 This file is authoritative for:
@@ -13,68 +13,60 @@ This file is authoritative for:
 - what is and is not part of the present release promise
 
 ## Current phase
-Codexify is in local-first beta hardening on `main`. The supported path remains the local Docker Compose stack with local-only provider posture. Recent `main` changes improved operator visibility and added a site-ready documentation export bundle, but they do not widen the release promise.
+Codexify is in local-first beta hardening on `main`. The supported path is still the local Docker Compose stack with local-only provider posture. Recent merged work tightened local runtime configuration, release-sentinel behavior, and Guardian work-order briefing, but it does not widen the release promise.
 
 ## What changed recently
-- `main` added a site-ready developer guide export bundle under `docs/site-export/developer-guide/`.
-- `main` added Whooshd local provider catalog metadata.
-- Health checks still surface LLM model availability on the supported path.
-- Supported-profile, health, and catalog surfaces remain aligned on the local-only stack.
-- Personal-facts settings routing remains repaired on `main`.
-- GuardianChat still surfaces runtime visual state in the shell.
-- Internal/manual local-model draft adapter work remains present, but not a release promise.
-- Build Proposal artifacts now have a doctrine/scaffold surface for reviewable
-  Guardian Build Loop task candidates; proposal generation remains draft-only
-  and does not imply approval, execution, release support, runtime proof, or
-  autonomous self-modification.
+- `main` standardized Whoosh'd local runtime config.
+- `main` removed dead `releaseSupported` fields and restored missing `run_git` support in readiness tooling.
+- `main` fixed beta sentinel output ordering.
+- `main` merged Guardian work-brief artifacts for 2026-06-11 through 2026-06-15.
+- `main` kept the current-state override aligned with the latest merged posture.
 
 ## Current supported reality
 - Local Docker Compose remains the supported install path.
 - The supported posture is local-only: `CODEXIFY_LOCAL_ONLY_MODE=true`, `ALLOW_CLOUD_PROVIDERS=false`, `LLM_PROVIDER=local`.
-- Health checks report LLM model availability.
-- Chat completion works on the supported path and persists back into the source thread.
-- Upload -> embed -> readback works on the supported path.
-- Workspace-local Obsidian retrieval is supported on the current tip.
-- Image-turn containment remains proven on the supported profile.
-- Coding results return through Guardian into the source thread on the supported path.
+- `AI_BACKEND=local` is accepted only as legacy compatibility.
+- `LOCAL_RUNTIME_PRESET` selects `whooshd-mlx`, `ollama`, `lmstudio`, or `custom-openai-compatible` under the same local provider boundary.
+- Whoosh'd remains the supported Apple Silicon local runtime preset.
+- Whoosh'd local runtime config is standardized across setup and compose surfaces.
+- Live model availability is still proven only by inventory from `/v1/models` or `/api/tags`.
+- `GET /health`, `GET /health/chat`, and `GET /api/health/llm` remain the fastest runtime checks.
+- Chat completion, upload -> embed -> readback, and workspace-local retrieval remain the supported beta paths.
 - Graph writes remain default-off on the supported Compose path.
-- The release-truth override at `docs/architecture/00-current-state.md` is the live interpretation layer for this week.
+- Guardian work-order briefing exists on `main`, but it is operator support material, not a widened runtime promise.
 
 ## Not yet true / do not assume
 - Do not assume cloud-provider beta support.
 - Do not assume the packaged desktop shell replaces the local Compose supported path.
-- Do not assume command bus, delegation, federation, or graph write surfaces are part of the present release promise.
-- Do not assume the Guardian Retrieval Navigation Model, adaptive route hints, reviewable graph evolution proposals, or self-improving memory are shipped runtime features.
-- Do not assume the site-export bundle changes runtime support or release readiness.
-- Do not assume the local-model draft adapter is connected to Heartbeat, publishing, scheduling, command dispatch, or release approval.
-- Do not assume UI dispatch, lease allocation, live agent execution, or merge automation are release-proven.
-- Do not assume Guardian Build Loop doctrine means autonomous self-modification, auto-merge, push, or release-ready coding-worker behavior.
-- Do not assume Build Proposal generation means approval, execution, release
-  support, runtime proof, or autonomous self-modification.
-- Do not assume Whooshd catalog metadata widens provider support beyond the local-only contract.
-- Do not infer desktop packaging readiness from architecture docs alone.
+- Do not assume delegation, federation, or graph write surfaces are part of the present release promise.
+- Do not assume docs-only exports, scaffolds, prompt artifacts, or brief-generation output prove runtime support.
+- Do not assume Whoosh'd setup equals live provider reachability without endpoint/model inventory proof.
+- Do not infer a wider beta claim from the new local preset wiring alone.
+- Do not assume the Gemma E2B smoke default is itself live-model proof.
+- Do not assume legacy `AI_BACKEND` config is the preferred runtime contract.
+- Do not assume Guardian work briefs imply shipped executor capabilities.
 
 ## Active blockers
 - Queue-coupled chat still depends on Redis plus worker health.
 - Canonical and legacy config paths still coexist, so startup and operator state can drift.
-- Legacy `/tools` behavior still overlaps with the command bus.
-- Sync subscriptions are still process-local rather than durable across restarts.
-- Federation remains a high-blast-radius area with trust-policy and egress sensitivity.
+- End-to-end Guardian delegation is not yet a release-supported path.
+- Federation remains high-blast-radius and trust-policy sensitive.
+- Graph-write enablement stays outside the default release promise.
 
 ## This week’s priorities
-1. Keep the supported profile, health, and catalog surfaces aligned on `main`.
-2. Preserve fresh proof for chat, upload, retrieval, and coding-result return paths.
-3. Keep internal-only surfaces labeled as such and out of the release promise.
-4. Keep the release-truth docs in sync with the live `main` posture.
-5. Avoid widening supported beta claims until a new merged capability is proven end to end.
+1. Keep supported-profile, health, and catalog surfaces aligned on `main`.
+2. Keep legacy config compatibility narrow and clearly labeled.
+3. Preserve fresh proof for chat, upload, retrieval, and release-sentinel paths.
+4. Keep delegation, federation, and graph-write work explicitly out of the release promise until proven.
+5. Keep the release-truth docs synced with the live `main` posture.
 
 ## Release definition right now
 - [x] Supported-profile flags match the local-only beta contract.
+- [x] The current `main` tip includes a supported local runtime preset for Whoosh'd.
 - [x] Fresh live evidence exists on the current `main` tip for the supported path.
-- [x] Chat completion, upload -> embed -> readback, and workspace-local retrieval are proven on the supported stack.
-- [x] Coding results return through Guardian into the source thread.
-- [x] No internal-only or quarantined surface is part of the release claim.
-- [ ] Queue, config, sync, and federation risks must stay explicitly documented and rechecked when the supported path drifts.
+- [x] Chat completion, upload -> embed -> readback, and workspace-local retrieval are in the supported claim set.
+- [ ] Queue, config, delegation, and federation risks must stay explicitly documented and rechecked when the supported path drifts.
+- [ ] Legacy `AI_BACKEND` compatibility must not be mistaken for a new supported contract.
 
 ## How to read the rest of the KB
 - `system-overview.md` explains structure, not release readiness.

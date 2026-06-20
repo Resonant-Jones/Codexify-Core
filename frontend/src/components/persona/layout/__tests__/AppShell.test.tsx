@@ -8,7 +8,7 @@ import {
   within,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
@@ -207,7 +207,44 @@ vi.mock("@/components/ui/RefractiveGlassCard", () => ({
 }));
 
 vi.mock("@/components/surface/FrameCard", () => ({
-  default: ({ children }: { children?: ReactNode }) => <>{children ?? null}</>,
+  default: ({
+    children,
+    ariaLabel,
+    depth: _depth,
+    selected: _selected,
+    hoverPop: _hoverPop,
+    refractiveFallback: _refractiveFallback,
+    shimmerMode: _shimmerMode,
+    liquidBezel: _liquidBezel,
+    liquidBezelWidth: _liquidBezelWidth,
+    fill: _fill,
+    ...props
+  }: HTMLAttributes<HTMLDivElement> & {
+    ariaLabel?: string;
+    children?: ReactNode;
+    depth?: number;
+    selected?: boolean;
+    hoverPop?: boolean;
+    refractiveFallback?: boolean;
+    shimmerMode?: "subtle" | "strong" | "ambient";
+    liquidBezel?: boolean;
+    liquidBezelWidth?: number;
+    fill?: boolean;
+  }) => {
+    void _depth;
+    void _selected;
+    void _hoverPop;
+    void _refractiveFallback;
+    void _shimmerMode;
+    void _liquidBezel;
+    void _liquidBezelWidth;
+    void _fill;
+    return (
+      <div {...props} aria-label={ariaLabel ?? props["aria-label"]}>
+        {children ?? null}
+      </div>
+    );
+  },
 }));
 
 vi.mock("@/features/chat/GuardianChat", () => ({
@@ -553,7 +590,7 @@ describe("AppShell settings utility trigger", () => {
     vi.clearAllMocks();
   });
 
-  it("keeps Flow Builder and Persona Studio visible in the primary nav", async () => {
+  it("keeps the primary nav in the preferred visual order", async () => {
     const user = userEvent.setup();
     localStorage.setItem("cfy.lastView", "dashboard");
 
@@ -581,12 +618,34 @@ describe("AppShell settings utility trigger", () => {
       "max-w-full"
     );
     const primaryNav = within(screen.getByTestId("app-shell-top-nav"));
+    const navButtonOrder = primaryNav
+      .getAllByRole("button")
+      .map((button) => button.textContent?.trim() ?? "")
+      .filter((label) =>
+        [
+          "Guardian",
+          "Dashboard",
+          "Documents",
+          "Gallery",
+          "Flow Builder",
+          "Persona Studio",
+        ].includes(label)
+      );
+
+    expect(navButtonOrder).toEqual([
+      "Guardian",
+      "Dashboard",
+      "Documents",
+      "Gallery",
+      "Flow Builder",
+      "Persona Studio",
+    ]);
     expect(primaryNav.getByRole("button", { name: "Guardian" })).toBeInTheDocument();
     expect(primaryNav.getByRole("button", { name: "Dashboard" })).toBeInTheDocument();
-    expect(primaryNav.getByRole("button", { name: "Flow Builder" })).toBeInTheDocument();
-    expect(primaryNav.getByRole("button", { name: "Persona Studio" })).toBeInTheDocument();
     expect(primaryNav.getByRole("button", { name: "Documents" })).toBeInTheDocument();
     expect(primaryNav.getByRole("button", { name: "Gallery" })).toBeInTheDocument();
+    expect(primaryNav.getByRole("button", { name: "Flow Builder" })).toBeInTheDocument();
+    expect(primaryNav.getByRole("button", { name: "Persona Studio" })).toBeInTheDocument();
     expect(screen.queryByTestId("settings-view-mock")).not.toBeInTheDocument();
 
     await user.click(primaryNav.getByRole("button", { name: "Flow Builder" }));

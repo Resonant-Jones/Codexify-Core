@@ -35,7 +35,7 @@ Containers running at time of proof:
 
 | Check | Result |
 |---|---|
-| Active completion provider | `local` (Ollama at `100.109.4.57:11434`) |
+| Active completion provider | `local` (Ollama at `127.0.0.1:11434`) |
 | Active model | `Gemma 4 E 4 B Hauhau` (configured) |
 | Cloud providers (OpenAI, Anthropic, Gemini) | Disabled — missing credentials |
 | Retrieval backend | Chroma (`/app/.chroma`), shared runtime with worker write path |
@@ -66,8 +66,8 @@ Containers running at time of proof:
    "error":"local_model_resolution_error",
    "message":"No runnable local model was found...",
    "endpoint_resolution":{"state":"available",
-     "attempted_sequence":["http://100.109.4.57:11434"],
-     "attempts":[{"base_url":"http://100.109.4.57:11434","label":"100.109.4.57:11434","source":"primary","attempted":true,"selected":true}]}},
+     "attempted_sequence":["http://127.0.0.1:11434"],
+     "attempts":[{"base_url":"http://127.0.0.1:11434","label":"127.0.0.1:11434","source":"primary","attempted":true,"selected":true}]}},
  "completion_service":{"ok":true,"worker_heartbeat_detected":true,
    "worker_heartbeat_age_seconds":0.243}}
 ```
@@ -98,7 +98,7 @@ Containers running at time of proof:
 **Result: PASS** — Chroma is the active retrieval backend, shared with worker write path. `proof_capable: true`.
 
 ### `/api/llm/catalog?include=all`
-Returns provider catalog with `local`, `openai`, `anthropic`, `gemini`. Local provider has one model confirmed available (`gemma4-e4b-hauhau:latest` per Ollama `/api/tags`). Cloud providers all disabled due to missing credentials. Ollama endpoint is reachable at `100.109.4.57:11434`.
+Returns provider catalog with `local`, `openai`, `anthropic`, `gemini`. Local provider has one model confirmed available (`gemma4-e4b-hauhau:latest` per Ollama `/api/tags`). Cloud providers all disabled due to missing credentials. Ollama endpoint is reachable at `127.0.0.1:11434`.
 **Result: PASS**
 
 **Health reconciliation verdict: PARTIAL PASS** — Core health, retrieval health, and LLM catalog are healthy. LLM health surfaces correctly report the model name mismatch as `local_model_unavailable`.
@@ -180,11 +180,11 @@ curl -s -X POST http://localhost:8888/api/chat/1215/complete \
 ERROR - [task] failed type=chat_completion id=ee3ed122...
   err=502: Local inference request failed for model 'Gemma 4 E 4 B Hauhau'.
   Attempted endpoints:
-    http://100.109.4.57:11434/api/chat (HTTP 400: invalid model name);
-    http://100.109.4.57:11434/v1/chat/completions (HTTP 400: invalid model name)
+    http://127.0.0.1:11434/api/chat (HTTP 400: invalid model name);
+    http://127.0.0.1:11434/v1/chat/completions (HTTP 400: invalid model name)
 ```
 
-**Root cause**: Ollama is running at `100.109.4.57:11434` with model `gemma4-e4b-hauhau:latest`. Codexify is configured with `LOCAL_CHAT_MODEL=Gemma 4 E 4 B Hauhau` which does not match any available model name in the Ollama registry.
+**Root cause**: Ollama is running at `127.0.0.1:11434` with model `gemma4-e4b-hauhau:latest`. Codexify is configured with `LOCAL_CHAT_MODEL=Gemma 4 E 4 B Hauhau` which does not match any available model name in the Ollama registry.
 
 **Historical evidence**: Worker logs show thread 1214 had two successful completions (`task_id=1c08aa48...`, `task_id=5066f206...`) earlier in this container's uptime, using `source_mode=personal_knowledge` and achieving `semantic=2` and `semantic=3` retrieval. These confirm the worker can complete successfully when the model name matches.
 

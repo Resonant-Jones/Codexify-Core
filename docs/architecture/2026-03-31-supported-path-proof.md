@@ -4,7 +4,7 @@
 **Branch:** main
 **HEAD commit:** `5318886dd69d11835494da0a850ab4ddcbe7bc03`
 **Runtime path:** Local Docker Compose (docker-compose.yml default services)
-**Active provider/model:** local / qwen3.5:0.8b (via http://100.109.4.57:11434)
+**Active provider/model:** local / qwen3.5:0.8b (via http://127.0.0.1:11434)
 **Startup env-file:** .env (CODEXIFY_RUNTIME_ENV_FILE=.env)
 
 ---
@@ -30,7 +30,7 @@ This proof specifically covers:
 | Runtime path | Docker Compose (backend, db, redis, neo4j, frontend, workers) |
 | Provider | local |
 | Model | qwen3.5:0.8b |
-| Ollama endpoint | http://100.109.4.57:11434 |
+| Ollama endpoint | http://127.0.0.1:11434 |
 | Active env vars | See Section 3 |
 
 Services running (from `docker compose ps`):

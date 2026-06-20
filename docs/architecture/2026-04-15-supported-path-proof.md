@@ -35,7 +35,7 @@ Containers running at time of proof:
 
 | Check | Result |
 |---|---|
-| Active completion provider | `local` (Ollama at `http://100.109.4.57:11434`) |
+| Active completion provider | `local` (Ollama at `http://127.0.0.1:11434`) |
 | Active model | `gemma4-e4b-hauhau:latest` (configured; matches Ollama registry) |
 | Cloud providers (OpenAI, Anthropic, Gemini) | Disabled — missing credentials; not in execution path |
 | Retrieval backend | Chroma (`/app/.chroma`), shared runtime with worker write path |
@@ -64,7 +64,7 @@ Containers running at time of proof:
 ```json
 {"status":"ok","service":"llm","ok":true,"status":"online","provider":"local","model":"gemma4-e4b-hauhau:latest",...}
 ```
-**Result: PASS** — `status":"online"`, model confirmed available at Ollama endpoint `http://100.109.4.57:11434`.
+**Result: PASS** — `status":"online"`, model confirmed available at Ollama endpoint `http://127.0.0.1:11434`.
 
 ### `/api/health/retrieval`
 ```json

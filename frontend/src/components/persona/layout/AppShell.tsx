@@ -35,6 +35,7 @@ import GuardianChat from "@/features/chat/GuardianChat";
 import DashboardView from "@/components/dashboard/DashboardView";
 import SettingsView from "@/features/settings/SettingsView";
 import PersonaStudioPage from "@/features/personaStudio/PersonaStudioPage";
+import TtsConsoleLauncher from "@/features/ttsConsole/TtsConsoleLauncher";
 import FlowBuilderPage from "@/features/flowBuilder/FlowBuilderPage";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import DocumentsView from "@/components/documents/DocumentsView";
@@ -2618,6 +2619,9 @@ export default function AppShell({
       <Settings2 className="h-4 w-4" aria-hidden="true" />
     </PhonePressButton>
   );
+  const ttsConsoleUtilityAction = (
+    <TtsConsoleLauncher className="pill-tab h-9 w-9 shrink-0 p-0" />
+  );
   const shareUtilityAction = activeRouteThreadId != null ? (
     <ShareButton
       targetType="thread"
@@ -2678,6 +2682,7 @@ export default function AppShell({
   const desktopHeaderUtilityActions = (
     <>
       {settingsUtilityAction}
+      {ttsConsoleUtilityAction}
       {workspaceDrawerToggle}
       {documentsSidebarToggle}
       {shareUtilityAction}
@@ -2688,6 +2693,7 @@ export default function AppShell({
       {workspaceDrawerToggle}
       {documentsSidebarToggle}
       {settingsUtilityAction}
+      {ttsConsoleUtilityAction}
       {shareUtilityAction}
     </>
   );
@@ -2895,26 +2901,6 @@ export default function AppShell({
               <PhonePressButton
                 isPhoneShell={isPhoneShell}
                 className="pill-tab shrink-0 whitespace-nowrap"
-                data-state={view === "flowBuilder" ? "active" : "inactive"}
-                aria-current={view === "flowBuilder" ? "page" : undefined}
-                onClick={() => navigateToView("flowBuilder")}
-                style={getMobileNavPillStyle("flowBuilder")}
-              >
-                Flow Builder
-              </PhonePressButton>
-              <PhonePressButton
-                isPhoneShell={isPhoneShell}
-                className="pill-tab shrink-0 whitespace-nowrap"
-                data-state={view === "personaStudio" ? "active" : "inactive"}
-                aria-current={view === "personaStudio" ? "page" : undefined}
-                onClick={() => navigateToView("personaStudio")}
-                style={getMobileNavPillStyle("personaStudio")}
-              >
-                Persona Studio
-              </PhonePressButton>
-              <PhonePressButton
-                isPhoneShell={isPhoneShell}
-                className="pill-tab shrink-0 whitespace-nowrap"
                 data-state={view === "documents" ? "active" : "inactive"}
                 aria-current={view === "documents" ? "page" : undefined}
                 onClick={() => navigateToView("documents")}
@@ -2931,6 +2917,26 @@ export default function AppShell({
                 style={getMobileNavPillStyle("gallery")}
               >
                 Gallery
+              </PhonePressButton>
+              <PhonePressButton
+                isPhoneShell={isPhoneShell}
+                className="pill-tab shrink-0 whitespace-nowrap"
+                data-state={view === "flowBuilder" ? "active" : "inactive"}
+                aria-current={view === "flowBuilder" ? "page" : undefined}
+                onClick={() => navigateToView("flowBuilder")}
+                style={getMobileNavPillStyle("flowBuilder")}
+              >
+                Flow Builder
+              </PhonePressButton>
+              <PhonePressButton
+                isPhoneShell={isPhoneShell}
+                className="pill-tab shrink-0 whitespace-nowrap"
+                data-state={view === "personaStudio" ? "active" : "inactive"}
+                aria-current={view === "personaStudio" ? "page" : undefined}
+                onClick={() => navigateToView("personaStudio")}
+                style={getMobileNavPillStyle("personaStudio")}
+              >
+                Persona Studio
               </PhonePressButton>
             </div>
           </div>

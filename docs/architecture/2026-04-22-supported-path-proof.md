@@ -4,7 +4,7 @@
 **Branch:** `main`
 **HEAD commit:** `54d0eb3a3a3bb20f8377b92e87e6a342323724ee`
 **Runtime path:** Local Docker Compose (backend, db, redis, neo4j, frontend, workers)
-**Active provider/model:** local / `gemma4-e4b-hauhau:latest` via `http://100.109.4.57:11434`
+**Active provider/model:** local / `gemma4-e4b-hauhau:latest` via `http://127.0.0.1:11434`
 **Proof window:** 2026-04-22T17:26:28Z to 2026-04-22T17:33:36Z
 
 ---
@@ -55,7 +55,7 @@ CODEXIFY_LOCAL_ONLY_MODE=false
 ALLOW_CLOUD_PROVIDERS=true
 LLM_PROVIDER=local
 LOCAL_CHAT_MODEL=gemma4-e4b-hauhau:latest
-LOCAL_BASE_URL=http://100.109.4.57:11434
+LOCAL_BASE_URL=http://127.0.0.1:11434
 ```
 
 That is not the supported local-only beta posture.

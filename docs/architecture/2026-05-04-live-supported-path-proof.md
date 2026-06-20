@@ -46,7 +46,7 @@ Observed runtime posture from the backend container:
 - `CODEXIFY_BETA_CORE_ONLY=false`
 - `CODEXIFY_LOCAL_ONLY_MODE=false`
 - `LLM_PROVIDER=local`
-- `LOCAL_BASE_URL=http://100.109.4.57:11434`
+- `LOCAL_BASE_URL=http://127.0.0.1:11434`
 - `LOCAL_CHAT_MODEL=gemma4-e4b-hauhau:latest`
 
 That posture does not strictly match the supported local-only beta contract.

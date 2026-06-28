@@ -1,3 +1,26 @@
+# ⚠️ Archived Repository
+
+This repository preserves a historical branch of the Codexify project and is maintained as a read-only archive.
+
+While this repository contains substantial work completed during Codexify's evolution, it is **not the project's current home**, nor was it the original long-term development repository.
+
+## Current Development
+
+Active development now continues in:
+
+**➡️ [Codexify](https://github.com/Resonant-Jones/<new-repo>)**
+
+The active repository contains the current architecture, ongoing development history, and future roadmap.
+
+## Why this archive exists
+
+Codexify evolved through several architectural phases. This repository represents one of those phases and remains available for historical reference, architectural comparison, and provenance.
+
+No further development will occur here.
+#######################################
+################################
+#######################
+###############
 # Codexify
 
 Codexify is a local-first chat + knowledge workspace built around a FastAPI backend (Guardian) and a React UI. It provides thread-based chat, memory silos, document autosave and sharing, media uploads, vector search, and optional workers for background tasks. Docker Compose is the primary, supported way to run the full stack.

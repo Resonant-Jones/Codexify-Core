@@ -17,10 +17,9 @@ The active repository contains the current architecture, ongoing development his
 Codexify evolved through several architectural phases. This repository represents one of those phases and remains available for historical reference, architectural comparison, and provenance.
 
 No further development will occur here.
-#######################################
-################################
-#######################
-###############
+
+
+
 # Codexify
 
 Codexify is a local-first chat + knowledge workspace built around a FastAPI backend (Guardian) and a React UI. It provides thread-based chat, memory silos, document autosave and sharing, media uploads, vector search, and optional workers for background tasks. Docker Compose is the primary, supported way to run the full stack.
